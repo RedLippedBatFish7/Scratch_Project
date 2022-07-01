@@ -1,6 +1,10 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Map from './components/map'
-import Dashboard from './pages/Dashboard'
+import Header from './components/Header';
+import Map from './components/map';
+import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
+import Register from './pages/Register'
 
 // // import './stylesheets/styles.scss';
 
@@ -17,11 +21,12 @@ const App = () => {
         <>
           <Router>
             <div className = 'container'>
+            <Header />
               <Routes>
-                <Route path = '/' element = {<Dashboard/>}/>
-                <Route path = '/login' element = {<Element2/>}/>
-                <Route path = '/register' element = {<Element3/>}/>
-                <Route path = '/map' element = {<Map/>}/>
+                <Route path = '/login' element = {<Login/>}/>
+                <Route path = '/register' element = {<Register/>}/>
+                {/* <Route path = '/' element = {<Dashboard/>}/>
+                <Route path = '/map' element = {<Map/>}/> */}
               </Routes>
             </div>
           </Router>

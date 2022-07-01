@@ -5,9 +5,9 @@ import App from './App';
 import map from './components/map'
 
 const app = (
-  <BrowserRouter>
-  <App/>
-  </BrowserRouter>
+  // <BrowserRouter>
+    <App/>
+  // </BrowserRouter>
 );
 
 render(app,document.getElementById('app'))
