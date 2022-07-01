@@ -28,7 +28,6 @@ CREATE TABLE "public".Buyers
  buyer_email         varchar(50) NOT NULL,
  password            varchar(50) NOT NULL,
  buyer_nickname      varchar(20) NOT NULL,
- buyer_address       varchar(50) NOT NULL,
  buyer_street_name   varchar(30) NOT NULL,
  buyer_street_number integer NOT NULL,
  buyer_zip_code      varchar(10) NOT NULL,
