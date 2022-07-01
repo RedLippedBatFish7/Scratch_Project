@@ -1,23 +1,20 @@
-import react from 'react'
+import React from 'react'
+import API_KEY from '../../personal.js'
+import { Loader } from "@googlemaps/js-api-loader"
 
-const map = () => {
+const Map = () => {
 
-    let map;
-
-function initMap() {
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: -34.397, lng: 150.644 },
-    zoom: 8,
-  });
+    const loader = new Loader({
+        apiKey: API_KEY,
+        version: "weekly",
+      });
+      
+      loader.load().then(() => {
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: -34.397, lng: 150.644 },
+          zoom: 8,
+        });
+      });
 }
 
-window.initMap = initMap;
-    
-    return(
-        <div>
-
-        </div>
-    )
-}
-
-export default map
+export default Map
