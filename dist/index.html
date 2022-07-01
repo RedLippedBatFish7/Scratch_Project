@@ -6,11 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Scratch Project</title>
-</head>
+<script defer src="/bundle.js"></script></head>
 
 <body>
-  <h1>index.HTML works! Update</h1>
+  <h1>index.HTML works!</h1>
   <script defer src="dist/bundle.js"></script>
+  <script>
+    console.log('Process ENV log', process.env.PG_URI)
+  </script>
   <!-- <script async src="https://maps.googleapis.com/maps/api/js?key=APIENTERHERE&callback=initMap"> -->
   </script>
   <!-- uncomment for build mode -->
