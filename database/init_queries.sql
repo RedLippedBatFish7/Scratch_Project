@@ -21,6 +21,7 @@ CREATE TABLE public.subusers (
 
 
 
+
 CREATE TABLE "public".Orders
 (
  pk_order_id       serial PRIMARY KEY NOT NULL,
@@ -31,12 +32,13 @@ CREATE TABLE "public".Orders
  seller_confirm    boolean NOT NULL,
  buyer_confirm     boolean NOT NULL,
 
- CONSTRAINT PK_31 PRIMARY KEY ( pk_order_id )
+ CONSTRAINT pk_order_id
+ FOREIGN KEY ("fk_seller_id") references Sellers("pk_seller_id") on delete cascade
 );
 
 CREATE TABLE "public".Buyers
 (
- pk_buyer_id         serial NOT NULL,
+ pk_buyer_id         serial PRIMARY KEY NOT NULL,
  buyer_email         varchar(50) NOT NULL,
  password            varchar(50) NOT NULL,
  buyer_nickname      varchar(20) NOT NULL,
@@ -53,7 +55,7 @@ CREATE TABLE "public".Buyers
 
 CREATE TABLE "public".Dishes
 (
- pk_dish_id         serial NOT NULL,
+ pk_dish_id         serial PRIMARY KEY NOT NULL,
  dish_name          varchar(50) NOT NULL,
  description        varchar(100) NOT NULL,
  price              money NOT NULL,
@@ -66,7 +68,7 @@ CREATE TABLE "public".Dishes
 
 CREATE TABLE "public".Sellers
 (
- pk_seller_id         serial NOT NULL,
+ pk_seller_id         serial PRIMARY KEY NOT NULL,
  seller_email         varchar(50) NOT NULL,
  password             varchar NOT NULL,
  seller_nickname      varchar(20) NOT NULL,
