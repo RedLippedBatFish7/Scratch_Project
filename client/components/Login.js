@@ -1,4 +1,5 @@
 const axios = require('axios');
+// const fetch = require('node-fetch');
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@mui/material/Card';
@@ -29,27 +30,33 @@ export default function Login(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    fetch('auth/login').then((response) => {
+      console.log(response);
+    });
     // fetch here
-    axios
-      .post('http://localhost:3000/auth/login', {
-        username,
-        password,
-        userType: 'buyer',
-      })
-      .then((response) => {
-        // handle success
-        props.setIsLoggedIn(true);
-        console.log('response goooood');
-        console.log(response);
-      })
-      .catch((error) => {
-        // handle error
-        console.log('hit error response');
-        console.log(error);
-      })
-      .then(() => {
-        // always executed
-      });
+    // axios
+    //   .post('http://localhost:3000/auth/login', {
+    //     username,
+    //     password,
+    //     userType: 'buyer',
+    //   })
+    //   .then((response) => {
+    //     // handle success
+    //     props.setIsLoggedIn(true);
+    //     console.log('response goooood');
+    //     console.log(response);
+    //     if (response === 'Welcome') {
+    //       console.log('welcome! :)');
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     // handle error
+    //     console.log('hit error response');
+    //     console.log(error);
+    //   })
+    //   .then(() => {
+    //     // always executed
+    //   });
   };
 
   return (

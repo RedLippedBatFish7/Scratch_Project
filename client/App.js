@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// <div id='map'>
+//     <Map/>
+// </div>
+
 // create App
 const App = () => {
   const classes = useStyles();
