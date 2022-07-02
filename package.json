@@ -11,6 +11,8 @@
   "author": "Kyle McCracken, Khang-Sabre Nguyen, Nia Huang, Saif Beiruty, Steve Benner",
   "license": "ISC",
   "dependencies": {
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.15",
     "@fortawesome/free-regular-svg-icons": "^5.7.2",
     "@fortawesome/free-solid-svg-icons": "^5.7.2",
