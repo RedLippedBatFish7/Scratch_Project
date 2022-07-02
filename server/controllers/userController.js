@@ -83,21 +83,15 @@ userController.login = async (req, res, next) => {
   // Destructuring the username and password
   const { username, password, userType } = req.body
   try {
-  // Loop over the username to check if it has an "@". If "@" exists then an email has been sent
+  // If "@" exists then an email has been sent
   let userLoginType = 'nickname';
-  for (let i = 0; i<username.length; i++) {
-    if(username[i] === '@') {
-      userLoginType = 'email'
-      break;
-    } else {
-      continue;
-    }
-  }
+    if (username.includes('@')) userLoginType = 'email'
+
   const userInfo = [username]
+  let sqlQueryUsername;
   // If an email has been sent then we need to search the table using the email column
   if (userLoginType === 'email') {
     // checking if the user is a seller or buyer to alter the query
-    let sqlQueryUsername;
     if (userType === 'seller') {
     sqlQueryUsername = `select * from public.sellers where seller_email = $1`
     } else {
@@ -111,6 +105,7 @@ userController.login = async (req, res, next) => {
       } 
   }
     const data = await db.query(sqlQueryUsername, userInfo)
+    console.log(data.rows[0])
     // Checks if data has been found or not
     if (data.rows[0] === undefined) return res.send('Username/Email does not exist')
     // If the username/emaiil has been found, it checks if the password matches
