@@ -38,7 +38,8 @@ userController.createSeller = async (req, res, next) => {
 
     return next();
   } catch (error) {
-    return next(error); // how to use global error handler?
+    console.log(error.detail)
+    return next({ message:  error.detail });
   }
 };
 
@@ -73,8 +74,7 @@ userController.createBuyer = async (req, res, next) => {
 
     return next();
   } catch (error) {
-    console.log(error)
-    return next(error); // how to use global error handler?
+    return next({ message:  error.detail }); // how to use global error handler?
   }
 
 };
@@ -121,6 +121,19 @@ userController.login = async (req, res, next) => {
     } 
   } catch (error) {
   return next(error)
+  }
+}
+
+// Used to send back seller information to the front end
+userController.sellerInformation = async (req, res, next) => {
+  try {
+  const sqlQuery = `select pk_seller_id, kitchen_name, seller_street_name, seller_street_number, seller_city, seller_zip_code
+   from public.sellers`;
+   data = await db.query(sqlQuery)
+   console.log(data.rows)
+   return next()
+  } catch (error) {
+    return next({ message:  error.detail })
   }
 }
 module.exports = userController;

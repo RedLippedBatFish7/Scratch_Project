@@ -45,6 +45,10 @@ app.post('/login', userController.login, (req, res) => {
   res.status(200).send('Welcome')
 })
 
+app.get('/feed', userController.sellerInformation, (req, res) => {
+  res.status(200).send('User Information')
+})
+
 // 404
 app.use('*', (req, res) => {
   // console.log(Object.keys(req));
@@ -64,7 +68,8 @@ app.use((err, req, res, next) => {
     message: { err: "An error occurred" },
   };
   let errorObj = Object.assign(defaultErr, { message: { err: err.message } });
-  res.status(errorObj.status).send(errorObj);
+  console.log(errorObj)
+  res.status(errorObj.status).json(errorObj);
 });
 
 
