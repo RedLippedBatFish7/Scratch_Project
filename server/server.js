@@ -36,6 +36,7 @@ app.use('*', (req, res) => {
   console.log(req.url);
   console.log(req.originalUrl);
   console.log('this is 404');
+  res.sendStatus(200);
 });
 
 // global err handler
