@@ -19,11 +19,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login() {
+export default function Login(props) {
   const classes = useStyles();
 
   // set form state
-  const [nickname, setNickname] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
@@ -31,7 +31,7 @@ export default function Login() {
 
     // fetch here
     axios
-      .post("/auth/login", { nickname, password, userType: "buyer" })
+      .post("/auth/login", { username, password, userType: "buyer" })
       .then((response) => {
         // handle success
         props.setIsLoggedIn(true);

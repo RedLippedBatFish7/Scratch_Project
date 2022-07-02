@@ -24,21 +24,38 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
     <div className={classes.webmain}>
       <CssBaseline />
       <Routes>
         <Route path="/" element={<Nav />}>
           {/* Displayed at same time as nav bar */}
-          <Route path="/" element={<Body />}>
+          <Route path="/" element={<Body setIsLoggedIn={setIsLoggedIn} />}>
             {/* Displayed at same time as generic body */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route
+              path="/login"
+              element={<Login setIsLoggedIn={setIsLoggedIn} />}
+            />
+            <Route
+              path="/signup"
+              element={<SignUp setIsLoggedIn={setIsLoggedIn} />}
+            />
           </Route>
-          <Route path="/seller" element={<SellerBody />}>
+          <Route
+            path="/seller"
+            element={<SellerBody setIsLoggedIn={setIsLoggedIn} />}
+          >
             {/* Displayed at same time as seller body */}
-            <Route path="/seller/login" element={<SellerLogin />} />
-            <Route path="/seller/signup" element={<SellerSignUp />} />
+            <Route
+              path="/seller/login"
+              element={<SellerLogin setIsLoggedIn={setIsLoggedIn} />}
+            />
+            <Route
+              path="/seller/signup"
+              element={<SellerSignUp setIsLoggedIn={setIsLoggedIn} />}
+            />
           </Route>
           {/* buyer feed */}
           <Route path="/feed" element={<SignUp />} />
