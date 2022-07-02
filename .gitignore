@@ -1,3 +1,4 @@
 node_modules
 .env
 personal.js
+package-lock.json
