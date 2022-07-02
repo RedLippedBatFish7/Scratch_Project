@@ -41,7 +41,7 @@ app.post('/auth/signup', userController.createSeller, userController.createBuyer
   }
 })
 
-app.post('/login', userController.login, (req, res) => {
+app.post('/auth/login', userController.login, (req, res) => {
   res.status(200).send('Welcome')
 })
 
