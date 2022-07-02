@@ -4,6 +4,7 @@ import Cooking from '../assets/cooking.jpg'
 import Button from '@material-ui/core/Button'
 import { Stack } from '@mui/material';
 import SignUp from './SignUp';
+import Login from './Login';
 
 //Styling
 const useStyles = makeStyles((theme) => ({
@@ -36,17 +37,28 @@ export default function Body() {
 //Declare variables and state
 const classes = useStyles();
 const [signUp,setSignUp] = useState(false)
+const [logIn,setLogin] = useState(false)
 let signUpModule
 
 //Sign-up Card Display Function
-const signUpFunc = () => {
-    console.log('Button Clicked, sign up was ', signUp)
-    setSignUp(!signUp)
-    console.log('Sign up is now ', signUp)
+const signUpFunc = (action) => {
+
+    if(action == 'sign'){
+        console.log('Button Clicked, sign up was ', signUp)
+        setSignUp(!signUp)
+        console.log('Sign up is now ', signUp)
+    } else {
+        setLogin(!logIn)
+    }
+   
 }
 
 if(signUp){
     signUpModule = <SignUp/>
+}
+
+if(logIn) {
+    signUpModule = <Login/>
 }
 
 //Return back to DOM
@@ -56,8 +68,8 @@ return (
  <h1 className={classes.heavyFont}> Grandma's cooking is a button press away</h1>
  {signUpModule}
  <Stack direction="row" spacing={2}>
- <Button variant="contained" color='primary' onClick={()=>{signUpFunc()}}>Sign up</Button>
- <Button variant="contained" color='secondary'>Login</Button>
+ <Button variant="contained" color='primary' onClick={()=>{signUpFunc('sign')}}>Sign up</Button>
+ <Button variant="contained" color='secondary' onClick={()=>{signUpFunc('log')}}>Login</Button>
  </Stack>
  </div>
  

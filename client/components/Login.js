@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
  }
 }));
 
-export default function SignUp() {
+export default function Login() {
 
 const classes = useStyles();
 
@@ -26,12 +26,11 @@ return (
 
 <div>
    <Paper elevation={6} className={classes.signupstack}>
-    <h2> Sign Up </h2>
+    <h2> Login </h2>
     <Stack spacing={2}>
-    <TextField label={'Username'}/>
-    <TextField type='email' label={'Email'}/>
-    <TextField type='password' label={'Password'}/>
-    <Button color='primary'>Submit</Button>
+    <TextField label={'Email'}/>
+    <TextField label={'Password'}/>
+    <Button color='primary'>Login</Button>
     </Stack>
    </Paper>
  </div>
