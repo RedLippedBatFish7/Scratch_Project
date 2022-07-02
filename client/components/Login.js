@@ -1,38 +1,104 @@
-import React from 'react'
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@mui/material/Card';
-import { CardContent, Paper, TextField, Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button'
-import { Stack } from '@mui/material';
+const axios = require("axios");
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@mui/material/Card";
+import { CardContent, Paper, TextField, Typography } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
- signupstack: {
-    padding: '10px',
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'absolute',
-    margin: '0px auto',
-    left: '20%',
-    right: '20%',
-    zIndex: '1'
- }
+  signupstack: {
+    padding: "10px",
+    display: "flex",
+    flexDirection: "column",
+    position: "absolute",
+    margin: "30px auto auto 0px",
+    left: "20%",
+    right: "20%",
+    zIndex: "1",
+  },
 }));
 
 export default function Login() {
+  const classes = useStyles();
 
-const classes = useStyles();
+  // set form state
+  const [nickname, setNickname] = useState("");
+  const [password, setPassword] = useState("");
 
-return (
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-<div>
-   <Paper elevation={6} className={classes.signupstack}>
-    <h2> Login </h2>
-    <Stack spacing={2}>
-    <TextField label={'Email'}/>
-    <TextField label={'Password'}/>
-    <Button color='primary'>Login</Button>
-    </Stack>
-   </Paper>
- </div>
-)
+    // fetch here
+    axios
+      .post("/auth/login", { nickname, password, userType: "buyer" })
+      .then((response) => {
+        // handle success
+        props.setIsLoggedIn(true);
+        console.log(response);
+      })
+      .catch((error) => {
+        // handle error
+        console.log(error);
+      })
+      .then(() => {
+        // always executed
+      });
+  };
+
+  return (
+    <div>
+      <Paper elevation={6} className={classes.signupstack}>
+        <form className={classes.root} onSubmit={handleSubmit}>
+          <h2> Log In </h2>
+          <Stack spacing={2}>
+            <TextField
+              label=" Username / Email"
+              variant="filled"
+              // required
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+            />
+            <TextField
+              label="Password"
+              variant="filled"
+              type="password"
+              // required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Login
+            </Button>
+          </Stack>
+        </form>
+      </Paper>
+    </div>
+  );
 }
+
+/* 
+<form className={classes.root} onSubmit={handleSubmit}>
+      <h2>Buyer Login</h2>
+      <TextField
+        label=' Username / Email'
+        variant='filled'
+        // required
+        value={nickName}
+        onChange={(e) => setNickname(e.target.value)}
+      />
+      <TextField
+        label='Password'
+        variant='filled'
+        type='password'
+        // required
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <div>
+        <Button type='submit' variant='contained' color='primary'>
+          Log In
+        </Button>
+      </div>
+    </form>
+*/

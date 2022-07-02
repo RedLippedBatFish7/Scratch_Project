@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Cooking from "../assets/cooking.jpg";
+import Baking from "../assets/baking.jpg";
 import Button from "@material-ui/core/Button";
 import { Stack } from "@mui/material";
 import SignUp from "./SignUp";
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url(${Cooking})`,
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url(${Baking})`,
     backgroundSize: "cover",
     backgroundRepeat: "none",
     backgroundColor: "transparent",
