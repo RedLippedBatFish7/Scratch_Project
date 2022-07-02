@@ -26,7 +26,7 @@ CREATE TABLE "public".Buyers
 (
  pk_buyer_id         serial PRIMARY KEY,
  buyer_email         varchar(50) NOT NULL,
- password            varchar(50) NOT NULL,
+ password            varchar NOT NULL,
  buyer_nickname      varchar(20) NOT NULL,
  buyer_street_name   varchar(30) NOT NULL,
  buyer_street_number integer NOT NULL,
