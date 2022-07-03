@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken')
 const userController = require('./controllers/userController');
 
 
@@ -41,12 +42,34 @@ app.post('/auth/signup', userController.createSeller, userController.createBuyer
   }
 })
 
+const tokenVerifier = (req, res, next) => {
+  const bearerHeader = req.headers['authorization']
+  if(typeof bearerHeader !== 'undefined') {
+    const bearer = bearerHeader.split(' ')
+    const bearerToken = bearer[1]
+    req.token = bearerToken
+    next()
+  } else {
+    console.log(bearerHeader)
+    res.sendStatus(403)
+  }
+}
+
 app.post('/auth/login', userController.login, (req, res) => {
-  res.status(200).send('Welcome')
+  jwt.sign({userdata: res.locals.data}, 'secret', (err, token)=>{
+    res.json({ token })
+  })
 })
 
-app.get('/feed', userController.sellerInformation, (req, res) => {
-  res.status(200).send('User Information')
+app.get('/feed', tokenVerifier, userController.sellerInformation, (req, res) => {
+  jwt.verify(req.token, 'secret', (err, data) => {
+    if(err) {
+      res.sendStatus(403)
+    } else {
+      res.status(200).send('User Information')
+    }
+  })
+  
 })
 
 // 404

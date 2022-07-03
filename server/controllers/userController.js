@@ -1,5 +1,6 @@
 const db = require('../../database/pg_model.js');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const userController = {};
 
 userController.createSeller = async (req, res, next) => {
@@ -98,6 +99,7 @@ userController.login = async (req, res, next) => {
     if (data.rows[0] === undefined) return res.send('Username/Email does not exist')
     // If the username/emaiil has been found, it checks if the password matches
     if (await bcrypt.compare(password, data.rows[0].password)) {
+      res.locals.data = data.rows[0]
       return next()
     } else {
       return res.send('Password is incorrect')
