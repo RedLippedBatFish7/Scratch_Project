@@ -31,6 +31,16 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     margin: '0px 10px',
   },
+  bottomText: {
+    fontSize: '25px',
+    position: 'absolute',
+    bottom: '0',
+    left: '20px',
+    color: 'white',
+  },
+  textLink: {
+    color: 'red',
+  },
 }));
 
 export default function Body() {
@@ -38,6 +48,7 @@ export default function Body() {
   const classes = useStyles();
   const [signUp, setSignUp] = useState(false);
   const [logIn, setLogin] = useState(false);
+  const [randomGreeting, setGreeting] = useState('');
   let signUpModule;
 
   //Sign-up Card Display Function
@@ -50,6 +61,21 @@ export default function Body() {
       setLogin(!logIn);
     }
   };
+
+  useEffect(() => {
+    // choose welcome text
+    const greetings = [
+      'cooking is',
+      'banana bread is',
+      'world famous meatballs are',
+      'apple pie is',
+      'ravioli is',
+      'soul food is',
+      '[ insert yummy food here ] is',
+    ];
+
+    setGreeting(greetings[Math.floor(Math.random() * greetings.length)]);
+  }, []);
 
   if (signUp) {
     //signUpModule = <SignUp />;
@@ -64,7 +90,7 @@ export default function Body() {
     <div className={classes.body}>
       <h1 className={classes.heavyFont}>
         {' '}
-        Grandma's cooking is a button press away
+        {`Grandma's ${randomGreeting} just a button press away`}
       </h1>
       {signUpModule}
       <Stack direction='row' spacing={2}>
@@ -92,6 +118,13 @@ export default function Body() {
         </Button>
       </Stack>
       <Outlet />
+      <p className={classes.bottomText}>
+        Already a seller or want to become one? Click{' '}
+        <Link className={classes.textLink} to='/seller'>
+          here
+        </Link>
+        .
+      </p>
     </div>
   );
 }

@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Nav() {
+export default function Nav(props) {
   const classes = useStyles();
 
   return (
@@ -52,7 +52,7 @@ export default function Nav() {
               <span className={classes.logoRed}>Pans</span> <DiningIcon />
             </h1>
           </Link>
-          <IconButton>
+          <IconButton onClick={() => props.setIsLoggedIn(false)}>
             <SortIcon className={classes.icon} />
           </IconButton>
         </Toolbar>

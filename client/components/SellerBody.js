@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url(${Baking})`,
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url(${Doughy})`,
     backgroundSize: 'cover',
     backgroundRepeat: 'none',
     backgroundColor: 'transparent',
@@ -38,6 +38,7 @@ export default function Body() {
   const classes = useStyles();
   const [signUp, setSignUp] = useState(false);
   const [logIn, setLogin] = useState(false);
+  const [randomGreeting, setGreeting] = useState('');
   let signUpModule;
 
   //Sign-up Card Display Function
@@ -51,6 +52,23 @@ export default function Body() {
     }
   };
 
+  useEffect(() => {
+    // choose welcome text
+    const greetings = [
+      "What's cookin'?",
+      'A chef, are you?',
+      'Anyone can cook!',
+      'Beans, greens, tomatos, potatos...',
+      'Please wash your hands!',
+      'Hello, undiscovered talent!',
+      "Oh, you're a creator of delectible comestibles too?",
+      'Always good to see someone so in tune with the culinary arts.',
+      "Oh! It's you! It must be our lucky day.",
+    ];
+
+    setGreeting(greetings[Math.floor(Math.random() * greetings.length)]);
+  }, []);
+
   if (signUp) {
     //signUpModule = <SignUp />;
   }
@@ -62,15 +80,12 @@ export default function Body() {
   //Return back to DOM
   return (
     <div className={classes.body}>
-      <h1 className={classes.heavyFont}>
-        {' '}
-        Grandma's cooking is a button press away
-      </h1>
+      <h1 className={classes.heavyFont}> {randomGreeting}</h1>
       {signUpModule}
       <Stack direction='row' spacing={2}>
         <Button
           component={Link}
-          to='/signup'
+          to='/seller/signup'
           variant='contained'
           color='primary'
           onClick={() => {
@@ -81,7 +96,7 @@ export default function Body() {
         </Button>
         <Button
           component={Link}
-          to='/login'
+          to='/seller/login'
           variant='contained'
           color='secondary'
           onClick={() => {

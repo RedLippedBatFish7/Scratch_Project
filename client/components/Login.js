@@ -1,6 +1,7 @@
 const axios = require('axios');
 // const fetch = require('node-fetch');
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@mui/material/Card';
 import { CardContent, Paper, TextField, Typography } from '@material-ui/core';
@@ -26,6 +27,7 @@ export default function Login(props) {
   // set form state
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -42,11 +44,11 @@ export default function Login(props) {
       })
       .then((response) => {
         // handle success
-        props.setIsLoggedIn(true);
         console.log('response goooood');
         console.log(response);
-        if (response === 'Welcome') {
-          console.log('welcome! :)');
+        if (response.data === 'Welcome') {
+          props.setIsLoggedIn(true);
+          navigate('/');
         }
       })
       .catch((error) => {
@@ -68,20 +70,24 @@ export default function Login(props) {
           <Stack spacing={2}>
             <TextField
               label=' Username / Email'
-              variant='filled'
-              // required
+              // variant='filled'
+              required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
             <TextField
               label='Password'
-              variant='filled'
+              // variant='filled'
               type='password'
-              // required
+              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Button type='submit' variant='contained' color='primary'>
+            <Button
+              type='submit'
+              // variant='contained'
+              color='primary'
+            >
               Login
             </Button>
           </Stack>
@@ -90,29 +96,3 @@ export default function Login(props) {
     </div>
   );
 }
-
-/* 
-<form className={classes.root} onSubmit={handleSubmit}>
-      <h2>Buyer Login</h2>
-      <TextField
-        label=' Username / Email'
-        variant='filled'
-        // required
-        value={nickName}
-        onChange={(e) => setNickname(e.target.value)}
-      />
-      <TextField
-        label='Password'
-        variant='filled'
-        type='password'
-        // required
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <div>
-        <Button type='submit' variant='contained' color='primary'>
-          Log In
-        </Button>
-      </div>
-    </form>
-*/
