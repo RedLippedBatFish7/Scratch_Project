@@ -3,7 +3,9 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 const userController = require('./controllers/userController');
+const tokenVerifier = require('./controllers/verifyTokenController');
 
 const app = express();
 const PORT = 3000;
@@ -45,12 +47,29 @@ app.post(
 );
 
 app.post('/auth/login', userController.login, (req, res) => {
-  res.status(201).send('Welcome');
+  jwt.sign(
+    { userdata: res.locals.data },
+    process.env.ACCESS_TOKEN_SECRET,
+    (err, token) => {
+      res.json({ token });
+    }
+  );
 });
 
-app.get('/feed', userController.sellerInformation, (req, res) => {
-  res.status(200).send('User Information');
-});
+app.get(
+  '/feed',
+  tokenVerifier,
+  userController.sellerInformation,
+  (req, res) => {
+    jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
+      if (err) {
+        res.status(403).send('Invalid Token');
+      } else {
+        res.status(200).json(res.locals.data);
+      }
+    });
+  }
+);
 
 // 404
 app.use('*', (req, res) => {
