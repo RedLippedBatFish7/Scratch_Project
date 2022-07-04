@@ -2,6 +2,7 @@ const db = require('../../database/pg_model.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const userController = {};
+require('dotenv').config();
 
 userController.createSeller = async (req, res, next) => {
   // Checking the usertype to decide which controller it has to pass through (createSeller vs createBuyer)
@@ -116,6 +117,7 @@ userController.sellerInformation = async (req, res, next) => {
    from public.sellers`;
    data = await db.query(sqlQuery)
    console.log(data.rows)
+   res.locals.data = data.rows
    return next()
   } catch (error) {
     return next({ message:  error.detail })

@@ -5,6 +5,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken')
 const userController = require('./controllers/userController');
+const tokenVerifier = require('./controllers/verifyTokenController');
 
 
 
@@ -42,31 +43,20 @@ app.post('/auth/signup', userController.createSeller, userController.createBuyer
   }
 })
 
-const tokenVerifier = (req, res, next) => {
-  const bearerHeader = req.headers['authorization']
-  if(typeof bearerHeader !== 'undefined') {
-    const bearer = bearerHeader.split(' ')
-    const bearerToken = bearer[1]
-    req.token = bearerToken
-    next()
-  } else {
-    console.log(bearerHeader)
-    res.sendStatus(403)
-  }
-}
+
 
 app.post('/auth/login', userController.login, (req, res) => {
-  jwt.sign({userdata: res.locals.data}, 'secret', (err, token)=>{
+  jwt.sign({userdata: res.locals.data}, process.env.ACCESS_TOKEN_SECRET, (err, token)=>{
     res.json({ token })
   })
 })
 
 app.get('/feed', tokenVerifier, userController.sellerInformation, (req, res) => {
-  jwt.verify(req.token, 'secret', (err, data) => {
+  jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
     if(err) {
-      res.sendStatus(403)
+      res.status(403).send('Invalid Token')
     } else {
-      res.status(200).send('User Information')
+      res.status(200).json(res.locals.data)
     }
   })
   
