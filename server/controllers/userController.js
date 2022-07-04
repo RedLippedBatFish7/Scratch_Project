@@ -1,6 +1,8 @@
 const db = require('../../database/pg_model.js');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const userController = {};
+require('dotenv').config();
 
 userController.createSeller = async (req, res, next) => {
   // Checking the usertype to decide which controller it has to pass through (createSeller vs createBuyer)
@@ -98,6 +100,7 @@ userController.login = async (req, res, next) => {
     if (data.rows[0] === undefined) return res.send('Username/Email does not exist')
     // If the username/emaiil has been found, it checks if the password matches
     if (await bcrypt.compare(password, data.rows[0].password)) {
+      res.locals.data = data.rows[0]
       return next()
     } else {
       return res.send('Password is incorrect')
@@ -114,6 +117,7 @@ userController.sellerInformation = async (req, res, next) => {
    from public.sellers`;
    data = await db.query(sqlQuery)
    console.log(data.rows)
+   res.locals.data = data.rows
    return next()
   } catch (error) {
     return next({ message:  error.detail })
