@@ -10,7 +10,7 @@ CREATE TABLE "public".Sellers
  password             varchar NOT NULL,
  seller_nickname      varchar(20) UNIQUE NOT NULL,
  seller_bio           varchar(50) NULL,
- kitchen_name         varchar(30) UNIQUE NOT NULL,
+ kitchen_name         varchar(30) UNIQUE NULL,
  pickup_window_start  time NULL,
  pickup_window_end    time  NULL,
  seller_street_name   varchar(50)  NULL,
