@@ -4,14 +4,15 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 // import map from './components/Map'
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 
 const container = document.getElementById('app');
 const root = createRoot(container);
 root.render(
-  <BrowserRouter>
+  // switched from browser to hash router so refreshes wouldn't send fetch reqs w/ the url
+  <HashRouter>
     <App tab='home' />
-  </BrowserRouter>
+  </HashRouter>
 );
 
 //React 17 way old way
