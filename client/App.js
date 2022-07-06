@@ -10,6 +10,8 @@ import SignUp from './components/SignUp';
 import SellerBody from './components/SellerBody';
 import SellerLogin from './components/SellerLogin';
 import SellerSignUp from './components/SellerSignUp';
+import KitchenEdit from './components/KitchenEdit';
+import Account from './components/KitchenEdit';
 // // import './stylesheets/styles.scss';
 
 import { Routes, Route, Navigate } from 'react-router-dom';
@@ -29,7 +31,8 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [userType, setUserType] = useState('seller');
 
   if (isLoggedIn) {
     return (
@@ -39,9 +42,17 @@ const App = () => {
           {/* This route will see we're on "/" and auto-redirect to /feed. "/" isn't possible while logged in */}
           <Route path='/' element={<Navigate to='/feed' replace={true} />} />
           {/* Nav bar */}
-          <Route path='/' element={<Nav setIsLoggedIn={setIsLoggedIn} />}>
+          <Route
+            path='/'
+            element={<Nav setIsLoggedIn={setIsLoggedIn} userType={userType} />}
+          >
             {/* buyer feed */}
             <Route path='/feed' element={<Feed />} />
+            <Route path='/account' element={<Account userType={userType} />} />
+            <Route
+              path='/mykitchen'
+              element={<KitchenEdit userType={userType} />}
+            />
           </Route>
         </Routes>
       </div>
@@ -58,7 +69,12 @@ const App = () => {
             {/* Displayed at same time as generic body */}
             <Route
               path='/login'
-              element={<Login setIsLoggedIn={setIsLoggedIn} />}
+              element={
+                <Login
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUserType={setUserType}
+                />
+              }
             />
             <Route
               path='/signup'
@@ -72,7 +88,12 @@ const App = () => {
             {/* Displayed at same time as seller body */}
             <Route
               path='/seller/login'
-              element={<SellerLogin setIsLoggedIn={setIsLoggedIn} />}
+              element={
+                <SellerLogin
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUserType={setUserType}
+                />
+              }
             />
             <Route
               path='/seller/signup'

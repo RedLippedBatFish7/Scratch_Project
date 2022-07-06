@@ -2,6 +2,7 @@
 // const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
   entry: [
@@ -14,7 +15,7 @@ module.exports = {
     filename: 'bundle.js',
   },
   devtool: 'eval-source-map',
-  mode: 'development',
+  mode: isDevelopment ? 'development' : 'production',
   devServer: {
     host: 'localhost',
     port: 8080,

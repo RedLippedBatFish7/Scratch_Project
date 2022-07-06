@@ -52,7 +52,7 @@ export default function Nav(props) {
               <span className={classes.logoRed}>Pans</span> <DiningIcon />
             </h1>
           </Link>
-          <IconButton onClick={() => props.setIsLoggedIn(false)}>
+          <IconButton component={Link} to='/MyKitchen'>
             <SortIcon className={classes.icon} />
           </IconButton>
         </Toolbar>

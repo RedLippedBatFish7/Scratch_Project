@@ -32,10 +32,6 @@ export default function Login(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // fetch('auth/login').then((response) => {
-    //   console.log(response);
-    // });
-    // fetch here
     axios
       .post('/auth/login', {
         username,
@@ -46,6 +42,7 @@ export default function Login(props) {
         // nothing on data object, should mean req is good and JWT is signed
         if (Object.keys(response.data).length === 0) {
           props.setIsLoggedIn(true);
+          props.setUserType('buyer');
           navigate('/');
         } else console.log(response.data);
       })
