@@ -3,11 +3,9 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 const userController = require('./controllers/userController');
 const tokenVerifier2 = require('./controllers/verifyTokenController');
-
-
 
 const app = express();
 const PORT = 3000;
@@ -35,15 +33,18 @@ if (process.env.NODE_ENV !== 'development') {
   });
 }
 
-app.post('/auth/signup', userController.createSeller, userController.createBuyer, (req, res) => {
-  if(req.body.userType === 'seller') {
-    res.status(200).send('You have signed up as a seller')
-  } else {
-    res.status(200).send('You have signed up as a buyer')
+app.post(
+  '/auth/signup',
+  userController.createSeller,
+  userController.createBuyer,
+  (req, res) => {
+    if (req.body.userType === 'seller') {
+      res.status(200).send('You have signed up as a seller');
+    } else {
+      res.status(200).send('You have signed up as a buyer');
+    }
   }
-})
-
-
+);
 
 app.post('/auth/login', userController.login, (req, res) => {
   jwt.sign({userdata: res.locals.data}, process.env.ACCESS_TOKEN_SECRET, (err, token)=>{
@@ -56,12 +57,14 @@ app.get('/feed', tokenVerifier2, userController.sellerInformation, (req, res) =>
       res.status(200).json(res.locals.data)
 })
 
+
 // 404
 app.use('*', (req, res) => {
   // console.log(Object.keys(req));
   console.log(req.url);
   console.log(req.originalUrl);
   console.log('this is 404');
+  res.sendStatus(200);
 });
 
 // global err handler
@@ -70,15 +73,14 @@ app.use('*', (req, res) => {
 // });
 app.use((err, req, res, next) => {
   let defaultErr = {
-    log: "Express error handler caught unknown middleware error",
+    log: 'Express error handler caught unknown middleware error',
     status: 400,
-    message: { err: "An error occurred" },
+    message: { err: 'An error occurred' },
   };
   let errorObj = Object.assign(defaultErr, { message: { err: err.message } });
-  console.log(errorObj)
+  console.log(errorObj);
   res.status(errorObj.status).json(errorObj);
 });
-
 
 /**
  * start server
