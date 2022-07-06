@@ -5,12 +5,12 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const userController = require('./controllers/userController');
-const tokenVerifier = require('./controllers/verifyTokenController');
+const tokenVerifier2 = require('./controllers/verifyTokenController');
 
 const app = express();
 const PORT = 3000;
 
-// Importing Routers
+// Importing Router
 
 // Handling requests
 // needed this only because my proxy wasn't working bc webpack had an early bracket or something
@@ -41,12 +41,12 @@ app.post('/auth/signup', userController.createSeller, userController.createBuyer
 
 app.post('/auth/login', userController.login, (req, res) => {
   jwt.sign({ userdata: res.locals.data }, process.env.ACCESS_TOKEN_SECRET, (err, token) => {
-    console.log('token==>', token);
-    res.json({ token });
+    res.cookie('token', token, { httpOnly: true });
+    res.status(200).json({ token });
   });
 });
 
-app.get('/feed', tokenVerifier, userController.sellerInformation, (req, res) => {
+app.get('/feed', tokenVerifier2, userController.sellerInformation, (req, res) => {
   res.status(200).json(res.locals.data);
 });
 
@@ -56,6 +56,7 @@ app.use('*', (req, res) => {
   console.log(req.url);
   console.log(req.originalUrl);
   console.log('this is 404');
+  res.sendStatus(200);
 });
 
 // global err handler

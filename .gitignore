@@ -1,4 +1,6 @@
 node_modules
+protect.js
+package-lock.json 
 .env
 personal.js
-package-lock.json
+dist
