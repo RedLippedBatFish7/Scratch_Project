@@ -11,7 +11,7 @@ const tokenVerifier = (req, res, next) => {
         console.log('err==>', err);
         //res.status(403).send('Invalid Token');
 
-        return next({ status: 403, message: { err: 'Invalid Token' } });
+        return next({ status: 403, message: { error: err.message } });
       } else {
         return next();
       }
