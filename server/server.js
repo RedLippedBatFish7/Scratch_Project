@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const userController = require('./controllers/userController');
 const tokenVerifier2 = require('./controllers/verifyTokenController');
+const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
+const db = require('../database/pg_model.js');
 
 const app = express();
 const PORT = 3000;
@@ -33,6 +35,36 @@ if (process.env.NODE_ENV !== 'development') {
   });
 }
 
+app.post('/checkout', async (req, res) => {
+  const { dishId, quantity } = req.body
+  dish_id = [dishId]
+  sqlDishQuery = `select * from public.dishes where pk_dish_id = $1`
+  try {
+    dishData = await db.query(sqlDishQuery, dish_id)
+    data = dishData.rows[0]
+    console.log(data.price.slice(1)*100)
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: [{
+         price_data: {
+          currency: "usd",
+          product_data: {
+            name: data.dish_name
+          },
+          unit_amount: Number(data.price.slice(1)*100)
+        },
+        quantity: quantity
+      }],
+      success_url: 'http://www.google.com',
+      cancel_url: 'http://www.google.com',
+    })
+    res.status(200).json({ url: session.url })
+  } catch (error) {
+    console.log(error)
+  }
+})
+ 
 app.post(
   '/auth/signup',
   userController.createSeller,
