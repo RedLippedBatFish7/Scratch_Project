@@ -79,6 +79,7 @@ userController.login = async (req, res, next) => {
 
   const userInfo = [username]
   let sqlQueryUsername;
+  const type = (userType === "seller") ? "seller" : "buyer";
   // If an email has been sent then we need to search the table using the email column
   if (userLoginType === 'email') {
     // checking if the user is a seller or buyer to alter the query
@@ -100,7 +101,9 @@ userController.login = async (req, res, next) => {
     if (data.rows[0] === undefined) return res.send('Username/Email does not exist')
     // If the username/emaiil has been found, it checks if the password matches
     if (await bcrypt.compare(password, data.rows[0].password)) {
-      res.locals.data = data.rows[0]
+      let zip = `${type}_zip_code`
+      console.log(zip)
+      res.locals.data = data.rows[0][zip]
       return next()
     } else {
       return res.send('Password is incorrect')

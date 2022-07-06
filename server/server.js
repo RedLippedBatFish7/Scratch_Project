@@ -49,7 +49,7 @@ app.post(
 app.post('/auth/login', userController.login, (req, res) => {
   jwt.sign({userdata: res.locals.data}, process.env.ACCESS_TOKEN_SECRET, (err, token)=>{
     res.cookie('token', token, { httpOnly: true })
-    res.status(200).json({ token })
+    res.status(200).json(res.locals.data)
   })
 })
 
