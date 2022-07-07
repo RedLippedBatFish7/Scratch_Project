@@ -101,9 +101,9 @@ userController.login = async (req, res, next) => {
     if (data.rows[0] === undefined) return res.send('Username/Email does not exist')
     // If the username/emaiil has been found, it checks if the password matches
     if (await bcrypt.compare(password, data.rows[0].password)) {
-      let zip = `${type}_zip_code`
-      console.log(zip)
-      res.locals.data = data.rows[0][zip]
+      const zip = `${type}_zip_code`
+      const userId = `pk_${type}_id` 
+      res.locals.data = { user_id: data.rows[0][userId], zip: data.rows[0][zip]  }
       return next()
     } else {
       return res.send('Password is incorrect')
