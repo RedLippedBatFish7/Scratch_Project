@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper } from "@material-ui/core";
@@ -9,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "20px",
   },
 }));
-export default function ZipCodeGrab() {
+export default function ZipCodeGrab(props) {
   const classes = useStyles();
   //grabs Zipcode from text field
   const [UserZip, setUserZip] = useState(0);
@@ -27,19 +28,21 @@ export default function ZipCodeGrab() {
       setErrorZip(false);
 
       //Post request, send entered field to server
-      const dataBody = {
-        zipcode: UserZip,
-        userid: User,
-      };
+
+      axios
+        .post("/auth/zipcode", {
+          zipcode: UserZip,
+          userid: props.buyerId,
+        })
+        .then((response) => {
+          //if response is accepted, set state
+          //if not throw error
+        });
     } else {
+      //Error handling if zipcode is not 5 Digits (sorry Canada)
       setErrorZip(true);
     }
   };
-
-  useEffect(() => {
-    //Grab the users ID and set to state
-    //[UserId, setUserId] = useState(data.userid);
-  });
 
   return (
     <div>

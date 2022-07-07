@@ -28,25 +28,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Body() {
+export default function Body(props) {
   //Declare variables and state
   const classes = useStyles();
-  const [ZipCode, setZipCode] = useState(false);
+  const ZipCode = props.userZip;
+  const UserId = props.buyerId;
 
-  //Get state of Zipcode
-  useEffect(() => {
-    //FETCH to grab Zipcode data
-    //If Zipcode data exists, render to Zipcode
-    //Else render component asking for Zipcode
-  });
-
-  //Return back to DOM
+  console.log("Feed component hit, rendered with a zipcode of ", ZipCode);
+  console.log("Buyer Id recognized as ", UserId);
 
   if (ZipCode) {
+    //feed should go here
   } else {
     return (
       <div className={classes.body}>
-        <ZipCodeGrab />
+        <ZipCodeGrab buyerId={UserId} />
         <h1 className={classes.heavyFont}>{`Test feed`}</h1>
         <Outlet />
       </div>
