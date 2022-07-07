@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
     "name": "scratch-project",
     "version": "1.0.0",
@@ -68,4 +69,82 @@
     "nodemonConfig": {
         "ignore": []
     }
+<<<<<<< HEAD
 }
+=======
+  }
+=======
+{
+  "name": "scratch-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "build": "webpack",
+    "dev": "concurrently \"cross-env NODE_ENV=development webpack-dev-server --hot --progress --color\" \"nodemon ./server/server.js\""
+  },
+  "author": "Kyle McCracken, Khang-Sabre Nguyen, Nia Huang, Saif Beiruty, Steve Benner",
+  "license": "ISC",
+  "dependencies": {
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@googlemaps/js-api-loader": "^1.14.3",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
+    "@mui/icons-material": "^5.8.4",
+    "@mui/material": "^5.8.6",
+    "axios": "^0.27.2",
+    "bcrypt": "^5.0.1",
+    "bootstrap": "^5.1.3",
+    "client": "^0.0.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "jquery": "^3.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^3.2.6",
+    "pg": "^8.7.3",
+    "process": "^0.11.10",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.4.0",
+    "react-client": "^1.0.1",
+    "react-dom": "^18.2.0",
+    "react-hot-loader": "^4.13.0",
+    "react-router": "^6.3.0",
+    "react-router-dom": "^6.3.0",
+    "sass": "^1.53.0",
+    "sass-loader": "^13.0.2",
+    "stripe": "^9.11.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@babel/preset-env": "^7.18.6",
+    "@babel/preset-react": "^7.18.6",
+    "babel-loader": "^8.2.5",
+    "concurrently": "^7.2.2",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.7.1",
+    "eslint": "^8.19.0",
+    "eslint-plugin-react": "^7.30.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "nodemon": "^1.3.3",
+    "style-loader": "^3.3.1",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.9.3",
+    "webpack-hot-middleware": "^2.25.1"
+  },
+  "nodemonConfig": {
+    "ignore": []
+  }
+}
+>>>>>>> 5223534a6270dcdd8f833fbb0bb194218afc4cef
+>>>>>>> dev
