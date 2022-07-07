@@ -3,14 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Cooking from '../assets/cooking.jpg';
 import Button from '@material-ui/core/Button';
-import { Stack } from '@mui/material';
-import InputAdornment from '@mui/material/InputAdornment';
 import { Paper, TextField, IconButton, Tooltip } from '@material-ui/core';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddBox from '@mui/icons-material/AddBox';
 import AddCircle from '@mui/icons-material/AddCircle';
-import CurrencyTextField from '@unicef/material-ui-currency-textfield';
+import MenuItemEdit from './MenuItemEdit';
+import CuisineSelect from './CuisineSelect';
 
 /* 
 
@@ -56,38 +53,14 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     marginLeft: '20px',
     marginRight: '20px',
-    height: '85vh',
+    maxHeight: '85vh',
     justifyContent: 'space-between',
   },
   menuContainer: {
     display: 'flex',
     flexDirection: 'column',
-    height: '90%',
-  },
-  dishesContainer: {
-    // flex: '0 0 100%',
+    maxHeight: '90%',
     overflowY: 'scroll',
-  },
-  dishRow: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginTop: '20px',
-    padding: '20px',
-  },
-  dishPre: {
-    display: 'flex',
-  },
-  dishStats: {
-    display: 'flex',
-    flexGrow: 0,
-    flexShrink: 1,
-  },
-  dishStatItem: {
-    width: '80px',
-    margin: '10px',
-  },
-  dishName: {
-    flexGrow: 1,
   },
   submitContainer: {
     display: 'flex',
@@ -104,60 +77,51 @@ export default function Body(props) {
   const [changesObj, setChangesObj] = useState({});
   const [newDishNum, setNewDishNum] = useState(-1);
   const [updatingKitchenName, setUpdatingKitchenName] = useState(false);
+  const [selectedCuisines, setSelectedCuisines] = useState(false);
+  const [cuisinesUpdated, setCuisinesUpdated] = useState(false);
   const [kitchenName, setKitchenName] = useState({
     first: '',
     old: '',
     current: '',
   });
 
-  // populate dishesArr with the seller's dishes
-  useEffect(() => {
+  const refresh = () => {
     // redirect if not a seller ? I don't think I need this
+    console.log(props);
     if (props.userType !== 'seller') navigate('/');
-    // axios
-    //   .get(`/db/menu/`, {
-    //     userId: props.userId,
-    //   })
-    //   .then((res) => res.json())
-    //   .then((res) => {
-    //     // expect an array of objects
-    //     // { name: 'chips', price: 2.50, quantity: 4}
-    //     console.log('dishes: ', res);
-    //     setDishesArr(res);
-    //   })
-    //   .catch((error) => {
-    //     // handle error
-    //     console.log('hit error response');
-    //     console.log(error);
-    //   })
-    //   .then(() => {
-    //     // always executed
-    //   });
+    axios
+      .post(`/db/getmenu/`, {
+        userId: props.userId,
+      })
+      .then((res) => {
+        res = res.data;
+        console.log(res);
+        const kname = res.kitchenName
+          ? res.kitchenName
+          : '{ EDIT THIS KITCHEN NAME }';
+        setKitchenName({
+          current: kname,
+          old: kname,
+          first: kname,
+        });
+        setDishesArr(res.dishes);
+        setSelectedCuisines('Mexican, Italian'.split(', '));
+        // setSelectedCuisines(res.cuisines.split(', '))
+      })
+      .catch((error) => {
+        // handle error
+        console.log('hit error response');
+        console.log(error);
+      })
+      .then(() => {
+        // always executed
+      });
+  };
 
-    const fakeResponse = {
-      kitchenName: "Greg's Kitchen",
-      dishes: {
-        2: {
-          name: 'KFC',
-          description: 'finger licking good',
-          price: 15,
-          quantity: 30,
-        },
-        3: {
-          name: 'Sushi',
-          description: 'good stuff',
-          price: 35,
-          quantity: 100,
-        },
-      },
-    };
-
-    setKitchenName({
-      current: fakeResponse.kitchenName,
-      old: fakeResponse.kitchenName,
-      first: fakeResponse.kitchenName,
-    });
-    setDishesArr(fakeResponse.dishes);
+  useEffect(() => {
+    // run this first time the component mounts
+    // later, we can use refresh to fetch again without remounting
+    refresh();
   }, []);
 
   const updateDishProp = (id, prop, newVal) => {
@@ -177,13 +141,15 @@ export default function Body(props) {
     e.preventDefault();
     if (
       Object.keys(changesObj).length ||
-      kitchenName.first !== kitchenName.current
+      kitchenName.first !== kitchenName.current ||
+      cuisinesUpdated === true
     ) {
       console.log({
         kitchenName:
           kitchenName.first !== kitchenName.current
             ? kitchenName.current
             : false,
+        selectedCuisines: cuisinesUpdated ? selectedCuisines.join(', ') : false,
         menuChanges: Object.keys(changesObj).length ? changesObj : false,
       });
 
@@ -192,12 +158,17 @@ export default function Body(props) {
           kitchenName:
             kitchenName.first !== kitchenName.current
               ? kitchenName.current
-              : '',
+              : false,
+          selectedCuisines: cuisinesUpdated
+            ? selectedCuisines.join(', ')
+            : false,
           menuChanges: Object.keys(changesObj).length ? changesObj : false,
         })
         .then((res) => res.json())
         .then((res) => {
-          // hope it worked ?
+          // refresh the page to perform another fetch
+          // better yet, put useeffect stuff into a refresh function, and call it from useeffect
+          // then call that here
         })
         .catch((error) => {
           // handle error
@@ -206,6 +177,7 @@ export default function Body(props) {
         })
         .then(() => {
           // always executed
+          refresh();
           setChangesObj({});
           setKitchenName({
             ...kitchenName,
@@ -245,69 +217,31 @@ export default function Body(props) {
   const dishesRender = [];
   for (let dish in dishesArr) {
     dishesRender.push(
-      <Paper
-        elevation={2}
-        className={classes.dishRow + ' dishRow'}
+      <MenuItemEdit
         key={dish}
-        id={dish}
-      >
-        <div className={classes.dishPre}>
-          <TextField
-            required
-            variant='filled'
-            defaultValue={dishesArr[dish].name}
-            className={classes.dishName + ' dishName'}
-            label='Dish Name'
-            onChange={(e) => updateDishProp(dish, 'name', e.target.value)}
-          />
-          <div className={classes.dishStats}>
-            <CurrencyTextField
-              required
-              currencySymbol='$'
-              minimumValue='0'
-              //   outputFormat='number'
-              decimalCharacter='.'
-              digitGroupSeparator=','
-              defaultValue={dishesArr[dish].price}
-              className={classes.dishStatItem + ' dishPrice'}
-              //   InputProps={{
-              //     startAdornment: (
-              //       <InputAdornment position='start'>$</InputAdornment>
-              //     ),
-              //   }}
-              label='Price'
-              onChange={(e) => updateDishProp(dish, 'price', e.target.value)}
-            />
-            <TextField
-              required
-              type='number'
-              defaultValue={dishesArr[dish].quantity}
-              className={classes.dishStatItem + ' dishQty'}
-              label='Qty'
-              onChange={(e) => updateDishProp(dish, 'quantity', e.target.value)}
-            />
-            <Tooltip title='Delete Dish'>
-              <IconButton
-                onClick={() => {
-                  deleteDish(dish);
-                }}
-              >
-                <DeleteIcon sx={{ color: 'red' }} />
-              </IconButton>
-            </Tooltip>
-          </div>
-        </div>
-        <TextField
-          defaultValue={dishesArr[dish].description}
-          className={classes.dishDesc + ' dishDesc'}
-          //   variant='filled'
-          label='Extended description'
-          multiline
-          minRows={1}
-          maxRows={3}
-          onChange={(e) => updateDishProp(dish, 'description', e.target.value)}
-        />
-      </Paper>
+        dishId={dish}
+        name={dishesArr[dish].name}
+        price={dishesArr[dish].price}
+        quantity={dishesArr[dish].quantity}
+        description={dishesArr[dish].description}
+        updateDish={updateDishProp}
+        deleteDish={deleteDish}
+      />
+    );
+  }
+
+  // if we don't render selectedCuisines conditionally, it seems that it will render early
+  // and because it uses useeffect to update its initial list, if it has no data the
+  // first time it renders, it will not add anything
+  const cuisineRender = [];
+  if (!selectedCuisines === false) {
+    cuisineRender.push(
+      <CuisineSelect
+        key='cuisineselect'
+        selectedCuisines={selectedCuisines}
+        setSelectedCuisines={setSelectedCuisines}
+        setCuisinesUpdated={setCuisinesUpdated}
+      />
     );
   }
 
@@ -365,6 +299,19 @@ export default function Body(props) {
       </div>
     );
   }
+  const kitchenUpper = (
+    <div className={classes.kitchenUpper}>
+      {kitchenNameElement}
+      <div className='timeOps'>
+        <div>Time</div>
+        <div>Time</div>
+      </div>
+      <div className='addressFull'>
+        <div>Time</div>
+        <div>Time</div>
+      </div>
+    </div>
+  );
 
   //Return back to DOM
   return (
@@ -372,12 +319,16 @@ export default function Body(props) {
       <Paper>
         <form className={classes.form} onSubmit={submitChanges}>
           <div className={classes.menuContainer}>
-            {kitchenNameElement}
+            {kitchenUpper}
+            <h2 style={{ textAlign: 'center' }}>
+              Your Menu Cuisine:
+              {cuisineRender}
+            </h2>
             <div className={classes.dishesContainer}>{dishesRender}</div>
-            <IconButton onClick={addNewDish}>
-              <AddCircle /> {'New Dish'}
-            </IconButton>
           </div>
+          <IconButton onClick={addNewDish}>
+            <AddCircle /> {'New Dish'}
+          </IconButton>
           <div className={classes.submitContainer}>
             <Button type='submit' variant='contained' color='primary'>
               Submit All Kitchen Changes

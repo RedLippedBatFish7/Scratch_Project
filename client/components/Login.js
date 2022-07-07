@@ -43,6 +43,8 @@ export default function Login(props) {
         if (response.data.user_id) {
           props.setIsLoggedIn(true);
           props.setUserType('buyer');
+          props.setUserZip(response.data.zip);
+          props.setUserId(response.data.user_id);
           navigate('/');
         } else console.log(response.data);
       })

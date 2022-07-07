@@ -31,8 +31,10 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userType, setUserType] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [userType, setUserType] = useState('seller');
+  const [userId, setUserId] = useState(16);
+  const [userZip, setUserZip] = useState(0);
 
   // put a useffect here to read cookies to see if logged in currently
 
@@ -49,11 +51,14 @@ const App = () => {
             element={<Nav setIsLoggedIn={setIsLoggedIn} userType={userType} />}
           >
             {/* buyer feed */}
-            <Route path='/feed' element={<Feed />} />
+            <Route
+              path='/feed'
+              element={<Feed userZip={userZip} userId={userId} />}
+            />
             <Route path='/account' element={<Account userType={userType} />} />
             <Route
               path='/mykitchen'
-              element={<KitchenEdit userType={userType} />}
+              element={<KitchenEdit userType={userType} userId={userId} />}
             />
           </Route>
           <Route path='/*' element={<Navigate to='/' replace={true} />} />
@@ -76,6 +81,8 @@ const App = () => {
                 <Login
                   setIsLoggedIn={setIsLoggedIn}
                   setUserType={setUserType}
+                  setUserZip={setUserZip}
+                  setUserId={setUserId}
                 />
               }
             />
@@ -95,6 +102,8 @@ const App = () => {
                 <SellerLogin
                   setIsLoggedIn={setIsLoggedIn}
                   setUserType={setUserType}
+                  setUserZip={setUserZip}
+                  setUserId={setUserId}
                 />
               }
             />
