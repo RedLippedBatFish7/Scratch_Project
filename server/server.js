@@ -5,7 +5,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const userController = require('./controllers/userController');
-const tokenVerifier = require('./controllers/verifyTokenController');
+const tokenVerifier2 = require('./controllers/verifyTokenController');
+const stripeController = require('./controllers/stripeController');
 
 const app = express();
 const PORT = 3000;
@@ -33,6 +34,10 @@ if (process.env.NODE_ENV !== 'development') {
   });
 }
 
+app.post('/checkout', stripeController, (req, res) => {
+    res.status(200).json({ url: res.locals.session.url })
+})
+ 
 app.post(
   '/auth/signup',
   userController.createSeller,
@@ -47,29 +52,16 @@ app.post(
 );
 
 app.post('/auth/login', userController.login, (req, res) => {
-  jwt.sign(
-    { userdata: res.locals.data },
-    process.env.ACCESS_TOKEN_SECRET,
-    (err, token) => {
-      res.json({ token });
-    }
-  );
-});
+  jwt.sign({userdata: res.locals.data}, process.env.ACCESS_TOKEN_SECRET, (err, token)=>{
+    res.cookie('token', token, { httpOnly: true })
+    res.status(200).json(res.locals.data)
+  })
+})
 
-app.get(
-  '/feed',
-  tokenVerifier,
-  userController.sellerInformation,
-  (req, res) => {
-    jwt.verify(req.token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
-      if (err) {
-        res.status(403).send('Invalid Token');
-      } else {
-        res.status(200).json(res.locals.data);
-      }
-    });
-  }
-);
+app.get('/feed', tokenVerifier2, userController.sellerInformation, (req, res) => {
+      res.status(200).json(res.locals.data)
+})
+
 
 // 404
 app.use('*', (req, res) => {
