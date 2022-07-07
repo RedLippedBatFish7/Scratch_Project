@@ -16,6 +16,8 @@ export default function ZipCodeGrab() {
   //tracks errors if incorrect zipcode format is entered
   const [ErrorZip, setErrorZip] = useState(false);
 
+  //store userid in state
+
   const submitZipCode = (e) => {
     const zipRegex = new RegExp("^[0-9]{5}(?:-[0-9]{4})?$");
     console.log();
@@ -23,11 +25,21 @@ export default function ZipCodeGrab() {
     if (zipRegex.test(UserZip)) {
       console.log("Accepted!");
       setErrorZip(false);
+
       //Post request, send entered field to server
+      const dataBody = {
+        zipcode: UserZip,
+        userid: User,
+      };
     } else {
       setErrorZip(true);
     }
   };
+
+  useEffect(() => {
+    //Grab the users ID and set to state
+    //[UserId, setUserId] = useState(data.userid);
+  });
 
   return (
     <div>
