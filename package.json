@@ -44,7 +44,8 @@
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
     "sass": "^1.53.0",
-    "sass-loader": "^13.0.2"
+    "sass-loader": "^13.0.2",
+    "stripe": "^9.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",

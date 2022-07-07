@@ -43,8 +43,8 @@ export default function Login(props) {
         userType: 'seller',
       })
       .then((response) => {
-        // nothing on data object, should mean req is good and JWT is signed
-        if (Object.keys(response.data).length === 0) {
+        // if user_id sent, success
+        if (response.data.user_id) {
           props.setIsLoggedIn(true);
           props.setUserType('seller');
           navigate('/');
