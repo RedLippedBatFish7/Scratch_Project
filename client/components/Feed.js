@@ -76,7 +76,7 @@ for (let kitchenID in kitchens) {
   //Return back to DOM
   return (
     <div className={classes.body}>
-      <Paper className = {classes.feedItem}
+      <Paper elevation = {2} className = {classes.feedItem}
       >
         {kitchenArr}
       </Paper>
