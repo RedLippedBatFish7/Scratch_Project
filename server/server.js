@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const userController = require('./controllers/userController');
 const tokenVerifier2 = require('./controllers/verifyTokenController');
+const menuController = require('./controllers/menuController');
 
 const app = express();
 const PORT = 3000;
@@ -50,6 +51,26 @@ app.get('/feed', tokenVerifier2, userController.sellerInformation, (req, res) =>
   res.status(200).json(res.locals.data);
 });
 
+/*
+Receive a get req from:
+db/menu
+and a body of:
+{userId}
+Return an object containing:
+{ kitchenName, dishes: {...} }
+with each key:value pair of dishes looking like:
+{ dishId: { name, description, price, quantity } }
+*/
+app.get('/db/menu', menuController.getSellerMenu, (req, res) => {
+  console.log('res.locals.sellerMenu==>', res.locals.sellerMenu);
+  //adding tokenVerifier2 as the 2nd middleware?
+  res.status(200).json(res.locals.sellerMenu);
+});
+
+app.post('/db/menu', menuController.createDish, (req, res) => {
+  //adding tokenVerifier2 as the 2nd middleware?
+  res.status(200).json(res.locals.dish);
+});
 // 404
 app.use('*', (req, res) => {
   // console.log(Object.keys(req));
@@ -68,7 +89,6 @@ app.use((err, req, res, next) => {
     status: 400,
     message: { error: 'An error occurred' },
   };
-
   const errorObj = Object.assign(defaultErr, err);
   console.log('errorObj ==>', errorObj);
   return res.status(errorObj.status).json(errorObj.message);
