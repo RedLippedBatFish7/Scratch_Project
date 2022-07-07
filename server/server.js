@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const userController = require('./controllers/userController');
 const tokenVerifier2 = require('./controllers/verifyTokenController');
 const stripeController = require('./controllers/stripeController');
+const menuController = require('./controllers/menuController');
 
 const app = express();
 const PORT = 3000;
@@ -28,7 +29,9 @@ if (process.env.NODE_ENV !== 'development') {
   app.get('/', (req, res) => {
     console.log('picked up / only');
     // return res.sendStatus(200);
-    return res.status(203).sendFile(path.join(__dirname, '../client/index.html'));
+    return res
+      .status(203)
+      .sendFile(path.join(__dirname, '../client/index.html'));
   });
 }
 
@@ -36,24 +39,38 @@ app.post('/checkout', stripeController, (req, res) => {
   res.status(200).json({ url: res.locals.session.url });
 });
 
-app.post('/auth/signup', userController.createSeller, userController.createBuyer, (req, res) => {
-  if (req.body.userType === 'seller') {
-    res.status(200).send('You have signed up as a seller');
-  } else {
-    res.status(200).send('You have signed up as a buyer');
+app.post(
+  '/auth/signup',
+  userController.createSeller,
+  userController.createBuyer,
+  (req, res) => {
+    if (req.body.userType === 'seller') {
+      res.status(200).send('You have signed up as a seller');
+    } else {
+      res.status(200).send('You have signed up as a buyer');
+    }
   }
-});
+);
 
 app.post('/auth/login', userController.login, (req, res) => {
-  jwt.sign({ userdata: res.locals.data }, process.env.ACCESS_TOKEN_SECRET, (err, token) => {
-    res.cookie('token', token, { httpOnly: true });
-    res.status(200).json(res.locals.data);
-  });
+  jwt.sign(
+    { userdata: res.locals.data },
+    process.env.ACCESS_TOKEN_SECRET,
+    (err, token) => {
+      res.cookie('token', token, { httpOnly: true });
+      res.status(200).json(res.locals.data);
+    }
+  );
 });
 
-app.get('/feed', tokenVerifier2, userController.sellerInformation, (req, res) => {
-  res.status(200).json(res.locals.data);
-});
+app.get(
+  '/feed',
+  tokenVerifier2,
+  userController.sellerInformation,
+  (req, res) => {
+    res.status(200).json(res.locals.data);
+  }
+);
 
 /*
 Receive a get req from:

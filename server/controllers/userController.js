@@ -84,18 +84,22 @@ userController.login = async (req, res, next) => {
       if (userType === 'seller') {
         sqlQueryUsername = `select * from public.sellers where seller_nickname = $1`;
       } else {
-        sqlQueryUsername = `select * from public.buyers where buyer_email = $1`;
+        sqlQueryUsername = `select * from public.buyers where buyer_nickname = $1`;
       }
     }
     const data = await db.query(sqlQueryUsername, userInfo);
     console.log(data.rows[0]);
     // Checks if data has been found or not
-    if (data.rows[0] === undefined) return res.send('Username/Email does not exist');
+    if (data.rows[0] === undefined)
+      return res.send('Username/Email does not exist');
     // If the username/emaiil has been found, it checks if the password matches
     if (await bcrypt.compare(password, data.rows[0].password)) {
       const zip = `${type}_zip_code`;
       const userId = `pk_${type}_id`;
-      res.locals.data = { user_id: data.rows[0][userId], zip: data.rows[0][zip] };
+      res.locals.data = {
+        user_id: data.rows[0][userId],
+        zip: data.rows[0][zip],
+      };
       return next();
     } else {
       return res.send('Password is incorrect');
