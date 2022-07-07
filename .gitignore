@@ -1,6 +1,6 @@
 node_modules
 protect.js
-package-lock.json 
 .env
 personal.js
 dist
+temp.js
