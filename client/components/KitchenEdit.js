@@ -10,6 +10,20 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddBox from '@mui/icons-material/AddBox';
 import AddCircle from '@mui/icons-material/AddCircle';
+import CurrencyTextField from '@unicef/material-ui-currency-textfield';
+
+/* 
+
+should the "select available times for pickup TOMORROW" be on this page?
+and it's tomorrow, right?
+
+am I missing anything else that should be on this page? Remember, it's the Seller's kitchen page.
+
+I guess somewhere I need to add a place to have their address?
+
+Oh and somewhere to "enable" the shop so they'll appear on the market feed
+
+*/
 
 //Styling
 const useStyles = makeStyles((theme) => ({
@@ -69,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 1,
   },
   dishStatItem: {
-    width: '60px',
+    width: '80px',
     margin: '10px',
   },
   dishName: {
@@ -159,7 +173,8 @@ export default function Body(props) {
     setChangesObj(tempChanges);
   };
 
-  const submitChanges = () => {
+  const submitChanges = (e) => {
+    e.preventDefault();
     if (
       Object.keys(changesObj).length ||
       kitchenName.first !== kitchenName.current
@@ -246,20 +261,26 @@ export default function Body(props) {
             onChange={(e) => updateDishProp(dish, 'name', e.target.value)}
           />
           <div className={classes.dishStats}>
-            <TextField
+            <CurrencyTextField
               required
+              currencySymbol='$'
+              minimumValue='0'
+              //   outputFormat='number'
+              decimalCharacter='.'
+              digitGroupSeparator=','
               defaultValue={dishesArr[dish].price}
               className={classes.dishStatItem + ' dishPrice'}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>$</InputAdornment>
-                ),
-              }}
+              //   InputProps={{
+              //     startAdornment: (
+              //       <InputAdornment position='start'>$</InputAdornment>
+              //     ),
+              //   }}
               label='Price'
               onChange={(e) => updateDishProp(dish, 'price', e.target.value)}
             />
             <TextField
               required
+              type='number'
               defaultValue={dishesArr[dish].quantity}
               className={classes.dishStatItem + ' dishQty'}
               label='Qty'
@@ -267,7 +288,6 @@ export default function Body(props) {
             />
             <Tooltip title='Delete Dish'>
               <IconButton
-                className={classes.dishStatItem}
                 onClick={() => {
                   deleteDish(dish);
                 }}
@@ -296,6 +316,7 @@ export default function Body(props) {
     kitchenNameElement = (
       <div className={classes.kitchenNameContainer}>
         <TextField
+          label='Kitchen Name'
           defaultValue={kitchenName.current}
           variant='filled'
           onChange={(e) =>

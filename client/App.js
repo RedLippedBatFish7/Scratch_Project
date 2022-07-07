@@ -31,8 +31,10 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [userType, setUserType] = useState('seller');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState('');
+
+  // put a useffect here to read cookies to see if logged in currently
 
   if (isLoggedIn) {
     return (
@@ -54,6 +56,7 @@ const App = () => {
               element={<KitchenEdit userType={userType} />}
             />
           </Route>
+          <Route path='/*' element={<Navigate to='/' replace={true} />} />
         </Routes>
       </div>
     );
