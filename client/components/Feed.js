@@ -6,6 +6,10 @@ import { Stack } from '@mui/material';
 import { Outlet, Link } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper'
 import KitchenCard from './KitchenCards'
+import { Box } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+import { ClassSharp } from '@material-ui/icons';
+import { List } from '@material-ui/core';
 
 //Styling
 const useStyles = makeStyles((theme) => ({
@@ -15,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    // alignItems: 'center',
+    alignItems: 'center',
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url(${Cooking})`,
     backgroundSize: 'cover',
     backgroundRepeat: 'none',
@@ -32,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '15px',
     width: '100%',
     padding: '5px',
-    maxWidth: '800px'
+    maxWidth: '800px',
   },
   buttons: {
     display: 'flex', 
@@ -56,7 +60,10 @@ export default function Body(props) {
     // {sellerID: {kitchenName, timeOps, bio}}
     const kitchensFromFetch = { 1 : {kitchenName: 'Space Cat', timeOps: '7:00 AM - 5:00 PM', bio: 'Space Cat Food Theme'}, 
     2:  {kitchenName: 'Brazil Steak', timeOps: '10:00 AM - 5:00 PM', bio: 'Steaks but Brazillian'}, 
-    3:  {kitchenName: 'Big Meats', timeOps: '3:00 PM - 8:00 PM', bio: 'We doing it with hella meats'}
+    3:  {kitchenName: 'Big Meats', timeOps: '3:00 PM - 8:00 PM', bio: 'We doing it with hella meats'},
+    4:  {kitchenName: 'Juice', timeOps: '3:00 PM - 8:00 PM', bio: 'Cool juices'},
+    5:  {kitchenName: 'Water', timeOps: '3:00 PM - 8:00 PM', bio: 'Exquisite H2O'},
+    6:  {kitchenName: 'Hell Ice Cream', timeOps: '3:00 PM - 8:00 PM', bio: 'Very hot ice creams'}
     }
     
     setKitchens(kitchensFromFetch)
@@ -72,13 +79,20 @@ for (let kitchenID in kitchens) {
   )
 }
 
+
   //Declare variables and state
   //Return back to DOM
   return (
     <div className={classes.body}>
-      <Paper elevation = {2} className = {classes.feedItem}
+    <div style={{display: 'flex', justifyContent :'center', alignItems:'center'}}> 
+          <h1> Kitchens Ready For Action! </h1>
+    </div>
+      <Paper elevation = {2} 
+            className = {classes.feedItem}
+            variant = "outlined"  
+            style = {{maxHeight : '40rem', overflow: 'auto'}}
       >
-        {kitchenArr}
+        {kitchenArr} 
       </Paper>
       <Outlet />
     </div>
