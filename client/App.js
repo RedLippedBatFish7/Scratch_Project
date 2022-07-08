@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 // import { Route, NavLink, HashRouter } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
-import { CssBaseline, makeStyles } from '@material-ui/core';
-import Nav from './components/Nav';
-import Body from './components/Body';
-import Feed from './components/Feed';
-import Login from './components/Login';
-import SignUp from './components/SignUp';
-import SellerBody from './components/SellerBody';
-import SellerLogin from './components/SellerLogin';
-import SellerSignUp from './components/SellerSignUp';
+import Button from "@material-ui/core/Button";
+import { CssBaseline, makeStyles } from "@material-ui/core";
+import Nav from "./components/Nav";
+import Body from "./components/Body";
+import Feed from "./components/Feed";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
+import SellerBody from "./components/SellerBody";
+import SellerLogin from "./components/SellerLogin";
+import SellerSignUp from "./components/SellerSignUp";
 // // import './stylesheets/styles.scss';
 
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   webmain: {
-    backgroundColor: '#686de0',
-    color: 'black',
+    backgroundColor: "#686de0",
+    color: "black",
   },
 }));
 
@@ -30,6 +30,8 @@ const App = () => {
   const classes = useStyles();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userZip, setUserZip] = useState();
+  const [buyerId, setBuyerId] = useState();
 
   if (isLoggedIn) {
     return (
@@ -37,11 +39,14 @@ const App = () => {
         <CssBaseline />
         <Routes>
           {/* This route will see we're on "/" and auto-redirect to /feed. "/" isn't possible while logged in */}
-          <Route path='/' element={<Navigate to='/feed' replace={true} />} />
+          <Route path="/" element={<Navigate to="/feed" replace={true} />} />
           {/* Nav bar */}
-          <Route path='/' element={<Nav setIsLoggedIn={setIsLoggedIn} />}>
+          <Route path="/" element={<Nav setIsLoggedIn={setIsLoggedIn} />}>
             {/* buyer feed */}
-            <Route path='/feed' element={<Feed />} />
+            <Route
+              path="/feed"
+              element={<Feed userZip={userZip} buyerId={buyerId} />}
+            />
           </Route>
         </Routes>
       </div>
@@ -52,30 +57,41 @@ const App = () => {
     <div className={classes.webmain}>
       <CssBaseline />
       <Routes>
-        <Route path='/' element={<Nav setIsLoggedIn={() => {}} />}>
+        <Route path="/" element={<Nav setIsLoggedIn={() => {}} />}>
           {/* Displayed at same time as nav bar */}
-          <Route path='/' element={<Body setIsLoggedIn={setIsLoggedIn} />}>
+          <Route path="/" element={<Body setIsLoggedIn={setIsLoggedIn} />}>
             {/* Displayed at same time as generic body */}
             <Route
-              path='/login'
-              element={<Login setIsLoggedIn={setIsLoggedIn} />}
+              path="/login"
+              element={
+                <Login
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUserZip={setUserZip}
+                  setBuyerId={setBuyerId}
+                />
+              }
             />
             <Route
-              path='/signup'
+              path="/signup"
               element={<SignUp setIsLoggedIn={setIsLoggedIn} />}
             />
           </Route>
           <Route
-            path='/seller'
+            path="/seller"
             element={<SellerBody setIsLoggedIn={setIsLoggedIn} />}
           >
             {/* Displayed at same time as seller body */}
             <Route
-              path='/seller/login'
-              element={<SellerLogin setIsLoggedIn={setIsLoggedIn} />}
+              path="/seller/login"
+              element={
+                <SellerLogin
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUserZip={setUserZip}
+                />
+              }
             />
             <Route
-              path='/seller/signup'
+              path="/seller/signup"
               element={<SellerSignUp setIsLoggedIn={setIsLoggedIn} />}
             />
           </Route>
@@ -87,7 +103,7 @@ const App = () => {
           {/* on the downside, we'd have to make a redirect route for every route that exists when signed in */}
           {/* ! OR we could make the paths a bit dirtier by adding a prefix that all routes would share if signed in */}
           {/* but really I don't mind just having a bunch of routes */}
-          <Route path='/*' element={<Navigate to='/' replace={true} />} />
+          <Route path="/*" element={<Navigate to="/" replace={true} />} />
         </Route>
       </Routes>
     </div>
