@@ -72,6 +72,10 @@ app.get(
   }
 );
 
+app.post('/auth/zipcode', tokenVerifier2, userController.buyerZip, (req, res) => {
+  res.json("Successfully added zipcode")
+})
+
 /*
 Receive a get req from:
 db/menu
@@ -82,13 +86,13 @@ Return an object containing:
 with each key:value pair of dishes looking like:
 { dishId: { name, description, price, quantity } }
 */
-app.get('/db/menu', menuController.getSellerMenu, (req, res) => {
+app.get('/db/menu', tokenVerifier2, menuController.getSellerMenu, (req, res) => {
   console.log('res.locals.sellerMenu==>', res.locals.sellerMenu);
   //adding tokenVerifier2 as the 2nd middleware?
   res.status(200).json(res.locals.sellerMenu);
 });
 
-app.post('/db/menu', menuController.createDish, (req, res) => {
+app.post('/db/menu', tokenVerifier2, menuController.createDish, (req, res) => {
   //adding tokenVerifier2 as the 2nd middleware?
   res.status(200).json(res.locals.dish);
 });
