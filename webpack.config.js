@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 // const webpack = require('webpack');
+const Dotenv = require('dotenv-webpack'); // required for accessing .env from front-end. used in plugins.
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -85,6 +86,7 @@ module.exports = {
       template: './client/index.html',
       favicon: './client/assets/cheffy.png',
     }),
+    new Dotenv(),
   ],
   resolve: {
     // Enable importing JS / JSX files without specifying their extension

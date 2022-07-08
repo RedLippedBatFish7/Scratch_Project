@@ -208,15 +208,14 @@ export default function Body(props) {
           kitchenName:
             kitchenName.first !== kitchenName.current
               ? kitchenName.current
-              : false,
+              : null,
           selectedCuisines: cuisinesUpdated
             ? selectedCuisines.join(', ')
-            : false,
-          menuChanges: Object.keys(changesObj).length ? changesObj : false,
+            : null,
+          menuChanges: Object.keys(changesObj).length ? changesObj : null,
         })
         .then((res) => res.json())
         .then((res) => {
-          // refresh the page to perform another fetch
           // better yet, put useeffect stuff into a refresh function, and call it from useeffect
           // then call that here
         })

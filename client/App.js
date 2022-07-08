@@ -12,6 +12,7 @@ import SellerLogin from './components/SellerLogin';
 import SellerSignUp from './components/SellerSignUp';
 import KitchenEdit from './components/KitchenEdit';
 import Account from './components/KitchenEdit';
+import Mappy from './components/mappy';
 // // import './stylesheets/styles.scss';
 
 import { Routes, Route, Navigate } from 'react-router-dom';
@@ -31,9 +32,9 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [userType, setUserType] = useState('seller');
-  const [userId, setUserId] = useState(16);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState('');
+  const [userId, setUserId] = useState('');
   const [userZip, setUserZip] = useState(0);
 
   // put a useffect here to read cookies to see if logged in currently
@@ -88,7 +89,24 @@ const App = () => {
             />
             <Route
               path='/signup'
-              element={<SignUp setIsLoggedIn={setIsLoggedIn} />}
+              // element={<SignUp setIsLoggedIn={setIsLoggedIn} />}
+              element={
+                <span
+                  style={{
+                    height: '600px',
+                    width: '700px',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Mappy
+                    sellerAddr={'702 Lindenwood Drive 15108'}
+                    buyerAddr={'15222'}
+                    mapsize={['100%', '100%']}
+                    loadSize={3}
+                    loadColor='rgb(255,255,255,0.3)'
+                  />
+                </span>
+              }
             />
           </Route>
           <Route
