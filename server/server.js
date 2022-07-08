@@ -7,11 +7,12 @@ const jwt = require('jsonwebtoken');
 const userController = require('./controllers/userController');
 const tokenVerifier2 = require('./controllers/verifyTokenController');
 const stripeController = require('./controllers/stripeController');
+const menuController = require('./controllers/menuController');
 
 const app = express();
 const PORT = 3000;
 
-// Importing Routers
+// Importing Router
 
 // Handling requests
 // needed this only because my proxy wasn't working bc webpack had an early bracket or something
@@ -35,9 +36,9 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 app.post('/checkout', stripeController, (req, res) => {
-    res.status(200).json({ url: res.locals.session.url })
-})
- 
+  res.status(200).json({ url: res.locals.session.url });
+});
+
 app.post(
   '/auth/signup',
   userController.createSeller,
@@ -52,17 +53,49 @@ app.post(
 );
 
 app.post('/auth/login', userController.login, (req, res) => {
-  jwt.sign({userdata: res.locals.data}, process.env.ACCESS_TOKEN_SECRET, (err, token)=>{
-    res.cookie('token', token, { httpOnly: true })
-    res.status(200).json(res.locals.data)
-  })
+  jwt.sign(
+    { userdata: res.locals.data },
+    process.env.ACCESS_TOKEN_SECRET,
+    (err, token) => {
+      res.cookie('token', token, { httpOnly: true });
+      res.status(200).json(res.locals.data);
+    }
+  );
+});
+
+app.get(
+  '/feed',
+  tokenVerifier2,
+  userController.sellerInformation,
+  (req, res) => {
+    res.status(200).json(res.locals.data);
+  }
+);
+
+app.post('/auth/zipcode', tokenVerifier2, userController.buyerZip, (req, res) => {
+  res.json("Successfully added zipcode")
 })
 
-app.get('/feed', tokenVerifier2, userController.sellerInformation, (req, res) => {
-      res.status(200).json(res.locals.data)
-})
+/*
+Receive a get req from:
+db/menu
+and a body of:
+{userId}
+Return an object containing:
+{ kitchenName, dishes: {...} }
+with each key:value pair of dishes looking like:
+{ dishId: { name, description, price, quantity } }
+*/
+app.get('/db/menu', tokenVerifier2, menuController.getSellerMenu, (req, res) => {
+  console.log('res.locals.sellerMenu==>', res.locals.sellerMenu);
+  //adding tokenVerifier2 as the 2nd middleware?
+  res.status(200).json(res.locals.sellerMenu);
+});
 
-
+app.post('/db/menu', tokenVerifier2, menuController.createDish, (req, res) => {
+  //adding tokenVerifier2 as the 2nd middleware?
+  res.status(200).json(res.locals.dish);
+});
 // 404
 app.use('*', (req, res) => {
   // console.log(Object.keys(req));
@@ -77,14 +110,13 @@ app.use('*', (req, res) => {
 //   res.status(code).json({ error });
 // });
 app.use((err, req, res, next) => {
-  let defaultErr = {
-    log: 'Express error handler caught unknown middleware error',
+  const defaultErr = {
     status: 400,
-    message: { err: 'An error occurred' },
+    message: { error: 'An error occurred' },
   };
-  let errorObj = Object.assign(defaultErr, { message: { err: err.message } });
-  console.log(errorObj);
-  res.status(errorObj.status).json(errorObj);
+  const errorObj = Object.assign(defaultErr, err);
+  console.log('errorObj ==>', errorObj);
+  return res.status(errorObj.status).json(errorObj.message);
 });
 
 /**
