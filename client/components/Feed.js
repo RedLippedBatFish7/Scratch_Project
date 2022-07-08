@@ -2,14 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Cooking from '../assets/cooking.jpg';
 import Button from '@material-ui/core/Button';
-import { Stack } from '@mui/material';
 import { Outlet, Link } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import KitchenCard from './KitchenCards';
 import { Box } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
-import { ClassSharp } from '@material-ui/icons';
-import { List } from '@material-ui/core';
 
 //Styling
 const useStyles = makeStyles((theme) => ({
@@ -86,9 +83,9 @@ export default function Body(props) {
         bio: 'Water but really crisp',
       },
       6: {
-        kitchenName: 'HellFire Ice Cream',
+        kitchenName: 'Hellfire Club Ice Cream',
         timeOps: '3:00 PM - 8:00 PM',
-        bio: 'Very hot ice creams',
+        bio: 'Very hot ice creams and DnD',
       },
     };
 
