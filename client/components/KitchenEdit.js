@@ -3,11 +3,19 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Cooking from '../assets/cooking.jpg';
 import Button from '@material-ui/core/Button';
-import { Paper, TextField, IconButton, Tooltip } from '@material-ui/core';
+import {
+  Paper,
+  TextField,
+  IconButton,
+  Tooltip,
+  FormControlLabel,
+  Switch,
+} from '@material-ui/core';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import AddCircle from '@mui/icons-material/AddCircle';
 import MenuItemEdit from './MenuItemEdit';
 import CuisineSelect from './CuisineSelect';
+import { width } from '@mui/system';
 
 /* 
 
@@ -60,12 +68,54 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     maxHeight: '90%',
-    overflowY: 'scroll',
+    overflowY: 'auto',
+  },
+  dishesContainer: {
+    marginTop: '20px',
+    backgroundColor: 'rgb(220,220,220)',
+    // border: '10px solid gray',
   },
   submitContainer: {
     display: 'flex',
-    justifyContent: 'flex-end',
-    marginBottom: '20px',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    height: '80px',
+  },
+  kitchenUpper: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  kitchenStats: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    flexWrap: 'wrap',
+  },
+  addressFull: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginLeft: '20px',
+    marginRight: '20px',
+  },
+  topAddress: {
+    width: '100%',
+  },
+  leftAddress: {
+    // width: '50%',
+    marginRight: '10px',
+  },
+  rightAddress: {
+    // width: '50%',
+    marginLeft: '10px',
+  },
+  timeOps: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  timeOpItem: {
+    marginBottom: '15px',
+  },
+  activeKitchenName: {
+    width: '50%',
   },
 }));
 
@@ -250,6 +300,7 @@ export default function Body(props) {
     kitchenNameElement = (
       <div className={classes.kitchenNameContainer}>
         <TextField
+          className={classes.activeKitchenName}
           label='Kitchen Name'
           defaultValue={kitchenName.current}
           variant='filled'
@@ -302,13 +353,39 @@ export default function Body(props) {
   const kitchenUpper = (
     <div className={classes.kitchenUpper}>
       {kitchenNameElement}
-      <div className='timeOps'>
-        <div>Time</div>
-        <div>Time</div>
-      </div>
-      <div className='addressFull'>
-        <div>Time</div>
-        <div>Time</div>
+      <div className={classes.kitchenStats}>
+        <h3 style={{ textAlign: 'center' }}>
+          Cuisines In This Menu
+          {cuisineRender}
+        </h3>
+        <div className={classes.timeOps}>
+          <h3 style={{ textAlign: 'center' }}>Pickup Window</h3>
+          <TextField
+            className={classes.timeOpItem}
+            label={'Start Pickup'}
+            type={'time'}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            className={classes.timeOpItem}
+            label={'End Pickup'}
+            type={'time'}
+            InputLabelProps={{ shrink: true }}
+          />
+        </div>
+        <div className={classes.addressFull}>
+          <h3 style={{ marginBottom: 0 }}>Pickup Address</h3>
+          <span>
+            <TextField label={'Address'} className={classes.topAddress} />
+          </span>
+          <span>
+            <TextField label={'City'} className={classes.topAddress} />
+          </span>
+          <span>
+            <TextField label={'State'} className={classes.leftAddress} />
+            <TextField label={'Zip'} className={classes.rightAddress} />
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -320,16 +397,19 @@ export default function Body(props) {
         <form className={classes.form} onSubmit={submitChanges}>
           <div className={classes.menuContainer}>
             {kitchenUpper}
-            <h2 style={{ textAlign: 'center' }}>
-              Your Menu Cuisine:
-              {cuisineRender}
-            </h2>
-            <div className={classes.dishesContainer}>{dishesRender}</div>
+            <div className={classes.dishesContainer}>
+              <h3 style={{ textAlign: 'center' }}>Menu Customization</h3>
+              {dishesRender}
+            </div>
           </div>
-          <IconButton onClick={addNewDish}>
-            <AddCircle /> {'New Dish'}
-          </IconButton>
           <div className={classes.submitContainer}>
+            <FormControlLabel
+              control={<Switch defaultChecked />}
+              label='Toggle Market Visibility'
+            />
+            <IconButton onClick={addNewDish}>
+              <AddCircle /> {'New Dish'}
+            </IconButton>
             <Button type='submit' variant='contained' color='primary'>
               Submit All Kitchen Changes
             </Button>

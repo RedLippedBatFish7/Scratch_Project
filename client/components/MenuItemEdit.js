@@ -24,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     marginTop: '20px',
+    marginBottom: '20px',
+    marginLeft: '20px',
+    marginRight: '20px',
     padding: '20px',
   },
   dishPre: {

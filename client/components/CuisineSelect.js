@@ -104,8 +104,8 @@ export default function MultipleSelectChip(props) {
 
   return (
     <div>
-      <FormControl sx={{ m: 1, width: 400 }}>
-        <InputLabel id='demo-multiple-chip-label'>Cuisines</InputLabel>
+      <FormControl sx={{ m: 1, width: 300 }}>
+        <InputLabel id='demo-multiple-chip-label'>Select Cuisines</InputLabel>
         <Select
           defaultValue={'hello'}
           labelId='demo-multiple-chip-label'
@@ -113,9 +113,11 @@ export default function MultipleSelectChip(props) {
           multiple
           value={props.selectedCuisines}
           onChange={handleChange}
-          input={<OutlinedInput id='select-multiple-chip' label='Chip' />}
+          input={
+            <OutlinedInput id='select-multiple-chip' label='Select Cuisines' />
+          }
           renderValue={(selected) => (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.1 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value) => (
                 <Chip key={value} label={value} />
               ))}
