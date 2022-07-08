@@ -4,17 +4,6 @@ const jwt = require('jsonwebtoken');
 
 require('dotenv').config();
 
-/*
-Receive a get req from:
-db/menu
-and a body of:
-{userId}
-Return an object containing:
-{ kitchenName, dishes: {...} }  //using Array instead? 
-with each key:value pair of dishes looking like:
-{ dishId: { name, description, price, quantity } }
-*/
-
 const menuController = {};
 
 menuController.createDish = async (req, res, next) => {
@@ -44,7 +33,8 @@ menuController.createDish = async (req, res, next) => {
 };
 
 menuController.getSellerMenu = async (req, res, next) => {
-  const { userId } = req.body;
+  //const { userId } = req.body;
+  const userId = req.cookies.userId;
   const para = [userId];
 
   //will be an inner join table
@@ -55,13 +45,18 @@ menuController.getSellerMenu = async (req, res, next) => {
    FROM people LEFT OUTER JOIN species ON people.species_id = species._id LEFT OUTER JOIN planets ON people.homeworld_id = planets._id;`;
   const text2 = `SELECT f.title, f._id AS id FROM films f INNER JOIN people_in_films pif ON f._id=pif.film_id WHERE pif.person_id=$1;`;
   */
-  const sqlQuery = `select d.pk_dish_id, d.fk_seller_id, d.dish_name, d.description, d.price, d.quantity_available,s.kitchen_name
+  const sqlQuery = `select d.pk_dish_id, d.fk_seller_id, d.dish_name, d.description, d.price, d.quantity_available,s.kitchen_name, s.pickup_window_start, s.pickup_window_end, s.cuisine, s.market_enabled
   FROM public.dishes d INNER JOIN public.sellers s ON d.fk_seller_id=s.pk_seller_id WHERE d.fk_seller_id = $1;`;
   try {
-    data = await db.query(sqlQuery, para);
-    //console.log(data.rows);
+    const data = await db.query(sqlQuery, para);
+    console.log('data.rows==>', data.rows);
     const kitchenMenu = {};
     kitchenMenu.kitchenName = data.rows[0].kitchen_name;
+    kitchenMenu.pickup_window_start = data.rows[0].pickup_window_start;
+    kitchenMenu.pickup_window_end = data.rows[0].pickup_window_end;
+    kitchenMenu.cuisine = data.rows[0].cuisine;
+    kitchenMenu.market_enabled = data.rows[0].market_enabled;
+
     kitchenMenu.dishes = {};
 
     data.rows.forEach(dishObj => {
@@ -71,18 +66,170 @@ menuController.getSellerMenu = async (req, res, next) => {
       dish.description = dishObj.description;
       dish.price = dishObj.price;
       dish.quantity = dishObj.quantity_available;
-      //console.log("dish==>", dish)
       kitchenMenu.dishes[dishId] = dish;
+      //console.log("dish==>", dish)4
     });
 
-    console.log('kitchenMenu==>', kitchenMenu);
+    //console.log('kitchenMenu==>', kitchenMenu);
 
     res.locals.sellerMenu = kitchenMenu;
     return next();
   } catch (error) {
-    return next({ message: error.detail });
+    return next({ message: error.message });
   }
 };
+
+menuController.updateMenu = async (req, res, next) => {
+  const userId = req.cookies.userId;
+  console.log('userId==>', userId);
+  //const para = [userId];
+  const { kitchenName, menuChanges, windowTimes, address, cuisine, market_enabled } = req.body;
+
+  try {
+    if (kitchenName) {
+      const para = [kitchenName];
+      const sqlQuery = `UPDATE public.sellers
+      SET kitchen_name = $1
+       WHERE pk_seller_id=${userId};`;
+      const data = await db.query(sqlQuery, para);
+    }
+
+    for (let dishId in menuChanges) {
+      if (menuChanges[dishId]) {
+        if (Object.keys(menuChanges[dishId]).length === 0) {
+          const sqlQuery = `DELETE FROM public.dishes
+      WHERE pk_dish_id = ${dishId} ;`;
+          const data = await db.query(sqlQuery);
+        } else if (dishId < 0) {
+          const para = [];
+          const props = ['name', 'description', 'price', 'quantity'];
+          // storing the values of the above keys which are received in the body of the request in the values array
+          for (let i = 0; i < props.length; i++) {
+            //console.log('req.body.menuChanges[dishId][props[i]]==>', req.body.menuChanges[dishId][props[i]]);
+            para.push(req.body.menuChanges[dishId][props[i]]);
+          }
+          para.push(userId);
+          //console.log('para==>', para);
+          const sqlQuery = `INSERT INTO public.dishes (dish_name, description, price, quantity_available, fk_seller_id)
+           VALUES($1, $2, $3, $4, $5);`;
+          const data = await db.query(sqlQuery, para);
+        } else {
+          const cache = Object.entries(req.body.menuChanges[dishId]).filter(([key, value]) => value);
+
+          cache.forEach(([key, value], i) => {
+            if (key === 'name') {
+              cache[i][0] = 'dish_name';
+            }
+            if (key === 'quantity') {
+              cache[i][0] = 'quantity_available';
+            }
+          });
+          console.log('cache==>', cache);
+
+          let text = cache.reduce((str, [key, value]) => {
+            str += key + ' = ' + "'" + value + "', ";
+            return str;
+          }, '');
+
+          const sqlQuery = `UPDATE public.dishes
+         SET ${text.slice(0, -2)}
+          WHERE pk_dish_id=${dishId};`;
+
+          //console.log('sqlQuery==>', sqlQuery);
+
+          const data = await db.query(sqlQuery);
+        }
+      }
+    }
+
+    if (windowTimes) {
+      if (windowTimes.pickup_window_start) {
+        const para = [windowTimes.pickup_window_start];
+        const sqlQuery = `UPDATE public.sellers
+       SET pickup_window_start = $1
+       WHERE pk_seller_id=${userId};`;
+        const data = await db.query(sqlQuery, para);
+      }
+
+      if (windowTimes.pickup_window_end) {
+        const para = [windowTimes.pickup_window_end];
+        const sqlQuery = `UPDATE public.sellers
+    SET pickup_window_end = $1
+     WHERE pk_seller_id=${userId};`;
+        const data = await db.query(sqlQuery, para);
+      }
+    }
+
+    if (address) {
+      if (address.seller_street_name) {
+        const para = [address.seller_street_name];
+        const sqlQuery = `UPDATE public.sellers
+       SET seller_street_name = $1
+       WHERE pk_seller_id=${userId};`;
+        const data = await db.query(sqlQuery, para);
+      }
+
+      if (address.seller_street_number) {
+        const para = [address.seller_street_number];
+        const sqlQuery = `UPDATE public.sellers
+    SET seller_street_number = $1
+     WHERE pk_seller_id=${userId};`;
+        const data = await db.query(sqlQuery, para);
+      }
+
+      if (address.seller_city) {
+        const para = [address.seller_city];
+        const sqlQuery = `UPDATE public.sellers
+    SET seller_city = $1
+     WHERE pk_seller_id=${userId};`;
+        const data = await db.query(sqlQuery, para);
+      }
+
+      if (address.seller_zip_code) {
+        const para = [address.seller_zip_code];
+        const sqlQuery = `UPDATE public.sellers
+    SET seller_zip_code = $1
+     WHERE pk_seller_id=${userId};`;
+        const data = await db.query(sqlQuery, para);
+      }
+    }
+
+    if (cuisine) {
+      const para = [cuisine];
+      const sqlQuery = `UPDATE public.sellers
+      SET cuisine = $1
+       WHERE pk_seller_id=${userId};`;
+      const data = await db.query(sqlQuery, para);
+    }
+
+    if (market_enabled !== null && market_enabled !== undefined) {
+      const para = [market_enabled];
+      const sqlQuery = `UPDATE public.sellers
+      SET market_enabled  = $1
+       WHERE pk_seller_id=${userId};`;
+      const data = await db.query(sqlQuery, para);
+    }
+
+    res.locals.message = 'Menu updated successfully!';
+    return next();
+  } catch (e) {
+    console.log(e);
+    return next({ message: e.message });
+  }
+};
+
+module.exports = menuController;
+
+// windowTimes: {
+//   pickup_window_start, pickup_window_end;
+// }
+
+// address: {
+//   seller_street_name, seller_street_number, seller_city, seller_zip_code;
+// }
+
+// cuisine: string;
+// market_enabled: true / false;
 
 /*
 Receive a post req from:
@@ -96,32 +243,14 @@ with each subobject looking like one of the below:
 ```{ 12: { name, description, price, quantity }``` <-- update
 ```{ -1: { name, description, price, quantity }``` <-- insert
 
----
+---*/
 
-Consider using the following structure so you don't need separate commands for insert and update:
-```INSERT INTO customers (name, email)
-VALUES('Microsoft','hotline@microsoft.com') 
-ON CONFLICT (name) 
-DO 
-   UPDATE SET email = 'updated@email.com';```
-https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-upsert/
-*/
-
-menuController.updateMenu = async (req, res, next) => {
-  const userId = req.cookies.userId;
-  const para = [userId];
-  const { menuChanges } = req.body;
-  try {
-    for (let dishId in menuChanges) {
-      //{name, description, price, quantity
-      if (Object.keys(menuChanges[dishId]).length === 0) {
-        const sqlQuery = `DELETE FROM public.dishes
-      WHERE pk_dish_id=${dishId};`;
-      }
-    }
-  } catch (e) {
-    console.log(e); // need to use globa error hander later
-  }
-};
-
-module.exports = menuController;
+// DON'T KNOW HOW TO HANDLE WHEN pk_dish_id IS A NEGATIVE NUMBER
+// const sqlQuery = `INSERT INTO public.dishes (pk_dish_id, dish_name , description, price, quantity_available)
+// VALUES($1, $2, $3, $4, $5)
+// ON CONFLICT (pk_dish_id)
+// DO
+//    UPDATE SET dish_name = EXCLUDED.dish_name,
+//    description = EXCLUDED.description,
+//    price = EXCLUDED.price,
+//    quantity_available= EXCLUDED.quantity_available;`

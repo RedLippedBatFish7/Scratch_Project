@@ -1,23 +1,23 @@
-const axios = require('axios');
+const axios = require("axios");
 // const fetch = require('node-fetch');
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@mui/material/Card';
-import { CardContent, Paper, TextField, Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import { Stack } from '@mui/material';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@mui/material/Card";
+import { CardContent, Paper, TextField, Typography } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import { Stack } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   signupstack: {
-    padding: '10px',
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'absolute',
-    margin: '30px auto auto 0px',
-    left: '20%',
-    right: '20%',
-    zIndex: '1',
+    padding: "10px",
+    display: "flex",
+    flexDirection: "column",
+    position: "absolute",
+    margin: "30px auto auto 0px",
+    left: "20%",
+    right: "20%",
+    zIndex: "1",
   },
 }));
 
@@ -25,8 +25,8 @@ export default function Login(props) {
   const classes = useStyles();
 
   // set form state
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -37,25 +37,29 @@ export default function Login(props) {
     // });
     // fetch here
     axios
-      .post('/auth/login', {
+      .post("/auth/login", {
         username,
         password,
-        userType: 'buyer',
+        userType: "buyer",
       })
       .then((response) => {
         // if user_id sent, success
         if (response.data.user_id) {
           props.setIsLoggedIn(true);
-          navigate('/');
+          //Update cookies and update state
+          props.setUserZip(response.data.zip || null);
+          console.log("login Component Response ->", response.data);
+          props.setBuyerId(response.data.user_id);
+          navigate("/");
         } else console.log(response.data);
       })
       .catch((error) => {
         // handle error
-        console.log('hit error response');
+        console.log("hit error response");
         console.log(error);
       })
       .then(() => {
-        console.log('??????');
+        console.log("??????");
         // always executed
       });
   };
@@ -67,24 +71,24 @@ export default function Login(props) {
           <h2> Log In </h2>
           <Stack spacing={2}>
             <TextField
-              label=' Username / Email'
+              label=" Username / Email"
               // variant='filled'
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
             <TextField
-              label='Password'
+              label="Password"
               // variant='filled'
-              type='password'
+              type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             <Button
-              type='submit'
+              type="submit"
               // variant='contained'
-              color='primary'
+              color="primary"
             >
               Login
             </Button>

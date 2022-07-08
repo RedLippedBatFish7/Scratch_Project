@@ -29,7 +29,9 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userZip, setUserZip] = useState();
+  const [buyerId, setBuyerId] = useState();
 
   if (isLoggedIn) {
     return (
@@ -41,7 +43,10 @@ const App = () => {
           {/* Nav bar */}
           <Route path='/' element={<Nav setIsLoggedIn={setIsLoggedIn} />}>
             {/* buyer feed */}
-            <Route path='/feed' element={<Feed />} />
+            <Route
+              path='/feed'
+              element={<Feed userZip={userZip} buyerId={buyerId} />}
+            />
           </Route>
         </Routes>
       </div>
@@ -58,7 +63,13 @@ const App = () => {
             {/* Displayed at same time as generic body */}
             <Route
               path='/login'
-              element={<Login setIsLoggedIn={setIsLoggedIn} />}
+              element={
+                <Login
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUserZip={setUserZip}
+                  setBuyerId={setBuyerId}
+                />
+              }
             />
             <Route
               path='/signup'
@@ -72,7 +83,12 @@ const App = () => {
             {/* Displayed at same time as seller body */}
             <Route
               path='/seller/login'
-              element={<SellerLogin setIsLoggedIn={setIsLoggedIn} />}
+              element={
+                <SellerLogin
+                  setIsLoggedIn={setIsLoggedIn}
+                  setUserZip={setUserZip}
+                />
+              }
             />
             <Route
               path='/seller/signup'

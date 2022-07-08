@@ -48,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Body(props) {
   const classes = useStyles();
+  const ZipCode = props.userZip;
+  const UserId = props.buyerId;
+  const [zipCodeAssigned, setZipCodeAssigned] = useState(false);
 
   // define state
   const [kitchens, setKitchens] = useState({});
