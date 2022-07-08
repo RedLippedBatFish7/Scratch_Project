@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import { Outlet, Link } from 'react-router-dom';
 import { Box } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   typography: {
@@ -38,7 +39,18 @@ const useStyles = makeStyles((theme) => ({
 
 const Card = (props) => {
   const classes = useStyles();
+  // set box shadow state
   const [shadow, setShadow] = useState(2);
+  const navigate = useNavigate();
+
+  // set button redirecting to placing menu page of the kitchen
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    //navigate to /feed/sellerID
+    navigate(`/feed/:${props.kitchenID}`);
+  };
+
   return (
     <div>
       <Box
@@ -51,6 +63,7 @@ const Card = (props) => {
         onMouseOut={() => {
           setShadow(2);
         }}
+        onSubmit={handleSubmit}
       >
         <div
           id='kitchenCard'

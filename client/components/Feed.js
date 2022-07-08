@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import KitchenCard from './KitchenCards';
 import { Box } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
+import axios from 'axios';
 
 //Styling
 const useStyles = makeStyles((theme) => ({
@@ -54,6 +55,20 @@ export default function Body(props) {
 
   // define state
   const [kitchens, setKitchens] = useState({});
+
+  // axios to get state
+  axios
+    .get('/feed', {})
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((error) => {
+      console.log(`error in getting kitchen's feed`);
+      console.log(error);
+    })
+    .then(() => {
+      console.log(`what's going on?`);
+    });
 
   // useffect to run code once
   useEffect(() => {
