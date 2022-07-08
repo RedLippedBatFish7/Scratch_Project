@@ -33,16 +33,26 @@ export default function Body(props) {
   const classes = useStyles();
   const ZipCode = props.userZip;
   const UserId = props.buyerId;
+  const [zipCodeAssigned, setZipCodeAssigned] = useState(false);
 
   console.log("Feed component hit, rendered with a zipcode of ", ZipCode);
   console.log("Buyer Id recognized as ", UserId);
 
-  if (ZipCode) {
-    //feed should go here
+  if (ZipCode || zipCodeAssigned) {
+    return (
+      <div className={classes.body}>
+        <div className={classes.heavyFont}>
+          {" "}
+          Successfully Loaded Zip as {zipCodeAssigned || ZipCode}!
+        </div>
+        <h1 className={classes.heavyFont}>{`Test feed`}</h1>
+        <Outlet />
+      </div>
+    );
   } else {
     return (
       <div className={classes.body}>
-        <ZipCodeGrab buyerId={UserId} />
+        <ZipCodeGrab buyerId={UserId} setZipCodeAssigned={setZipCodeAssigned} />
         <h1 className={classes.heavyFont}>{`Test feed`}</h1>
         <Outlet />
       </div>

@@ -28,15 +28,19 @@ export default function ZipCodeGrab(props) {
       setErrorZip(false);
 
       //Post request, send entered field to server
+      //let token = localStorage.getItem("token");
+      //axios.defaults.headers.common["Authorization"] = token;
+      //   axios.defaults.withCredentials = true;
 
       axios
         .post("/auth/zipcode", {
           zipcode: UserZip,
           userid: props.buyerId,
+          withCredentials: true,
         })
         .then((response) => {
-          //if response is accepted, set state
-          //if not throw error
+          console.log("Response from server is", response);
+          props.setZipCodeAssigned(UserZip);
         });
     } else {
       //Error handling if zipcode is not 5 Digits (sorry Canada)

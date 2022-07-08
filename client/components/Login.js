@@ -47,8 +47,8 @@ export default function Login(props) {
         if (response.data.user_id) {
           props.setIsLoggedIn(true);
           //Update cookies and update state
-          props.setUserZip(response.buyer_zip_code || null);
-          console.log("login ->", response.data.user_id);
+          props.setUserZip(response.data.zip || null);
+          console.log("login Component Response ->", response.data);
           props.setBuyerId(response.data.user_id);
           navigate("/");
         } else console.log(response.data);
