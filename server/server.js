@@ -81,18 +81,8 @@ app.post(
   }
 );
 
-/*
-Receive a get req from:
-db/menu
-and a body of:
-{userId}
-Return an object containing:
-{ kitchenName, dishes: {...} }
-with each key:value pair of dishes looking like:
-{ dishId: { name, description, price, quantity } }
-*/
-app.post(
-  '/db/getmenu',
+app.get(
+  '/db/menu',
   tokenVerifier2,
   menuController.getSellerMenu,
   (req, res) => {
@@ -101,16 +91,17 @@ app.post(
     res.status(200).json(res.locals.sellerMenu);
   }
 );
+f;
 
-app.post(
-  '/db/updatemenu',
-  tokenVerifier2,
-  menuController.createDish,
-  (req, res) => {
-    //adding tokenVerifier2 as the 2nd middleware?
-    res.status(200).json(res.locals.dish);
-  }
-);
+app.post('/db/menu', tokenVerifier2, menuController.createDish, (req, res) => {
+  //adding tokenVerifier2 as the 2nd middleware?
+  res.status(200).json(res.locals.dish);
+});
+
+app.post('/db/updatemenu', menuController.updateMenu, (req, res) => {
+  //console.log('res.locals.sellerMenu==>', res.locals.sellerMenu);
+  res.status(200).json(res.locals.message);
+});
 // 404
 app.use('*', (req, res) => {
   // console.log(Object.keys(req));
