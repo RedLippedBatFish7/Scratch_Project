@@ -122,4 +122,22 @@ userController.sellerInformation = async (req, res, next) => {
     return next({ message: error.detail });
   }
 };
+
+userController.buyerZip = async (req, res, next) => {
+  // destructuring the request body
+  const { zipcode, userid } = req.body
+  details = [zipcode, userid]
+  try {
+    //updating the zipcode using the user id
+    const sqlZipQuery = `update public.buyers 
+    set buyer_zip_code = $1 
+    where pk_buyer_id = $2`
+    const data = await db.query(sqlZipQuery, details)
+    return next()
+  } catch (error) {
+    return next ({ message: error.detail })
+  }
+}
+
+
 module.exports = userController;
