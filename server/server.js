@@ -81,7 +81,7 @@ app.post(
   }
 );
 
-app.get(
+app.post(
   '/db/getmenu',
   tokenVerifier2,
   menuController.getSellerMenu,

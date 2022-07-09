@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -41,15 +42,23 @@ const Card = (props) => {
   const [shadow, setShadow] = useState(2);
   const navigate = useNavigate();
 
-  // set button redirecting to placing menu page of the kitchen
   const onClick = (e) => {
     e.preventDefault();
-    //Redirecting to Seller Page when user click button
+
+    // stop rendering full feed when user click button
     props.setFeedActive(false);
     //navigate to /feed/sellerID
-    navigate(`/feed/${props.kitchenID}`);
+    console.log(props.setfloatCart);
+    navigate(`/feed/${props.kitchenID}`, {
+      state: {
+        setfloatCart: { a: { b: 1 } },
+        // floatCart: props.floatCart,
+        // addToCart: () => {},
+        // removeFromCart: () => {},
+      },
+    });
   };
-  // console.log(props);
+
   return (
     <div>
       <Box

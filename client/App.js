@@ -1,18 +1,16 @@
-
-import React, { useState, useEffect } from 'react';
-
 // import { Route, NavLink, HashRouter } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
 import { CssBaseline, makeStyles } from '@material-ui/core';
-import Nav from './components/Nav';
-import Body from './components/Body';
+import MenuComponent from './components/MenuComponent';
+import React, { useState, useEffect } from 'react';
+import SellerLogin from './components/SellerLogin';
+import Button from '@material-ui/core/Button';
 import Feed from './components/Feed';
+import Nav from './components/Nav'; //    < SAIF WZ HERE >
+import Body from './components/Body';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import SellerBody from './components/SellerBody';
-import SellerLogin from './components/SellerLogin';
 import SellerSignUp from './components/SellerSignUp';
-
 import KitchenEdit from './components/KitchenEdit';
 import Account from './components/KitchenEdit';
 import Mappy from './components/mappy';
@@ -36,11 +34,10 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userType, setUserType] = useState('');
-  const [userId, setUserId] = useState('');
-  const [userZip, setUserZip] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [userType, setUserType] = useState('buyer');
+  const [userId, setUserId] = useState(13);
+  const [userZip, setUserZip] = useState(15222);
   const [loaded, setLoaded] = useState(false);
 
   // read cookies to see if logged in currently
@@ -88,7 +85,6 @@ const App = () => {
     setUserZip(0);
   };
 
-
   if (isLoggedIn) {
     return (
       <div className={classes.webmain}>
@@ -106,21 +102,15 @@ const App = () => {
             {/* buyer feed */}
             <Route
               path='/feed'
-              element={
-                <Feed
-                  userZip={userZip}
-                  userId={userId}
-                  setUserZip={setUserZip}
-                />
-              }
-            />
-            <Route path='/account' element={<Account userType={userType} />} />
+              element={<Feed userZip={userZip} userId={userId} />}
+            >
+              <Route path='/feed/:sellerId' />{' '}
+              {/* don't need an element here */}
+            </Route>
             <Route
               path='/MyKitchen'
               element={<KitchenEdit userType={userType} userId={userId} />}
-
             />
-            <Route path='/feed/:id' element={<SignUp />} />
           </Route>
           <Route path='/*' element={<Navigate to='/' replace={true} />} />
         </Routes>
@@ -132,9 +122,7 @@ const App = () => {
     <div className={classes.webmain}>
       <CssBaseline />
       <Routes>
-
         <Route path='/' element={<Nav />}>
-
           {/* Displayed at same time as nav bar */}
           <Route path='/' element={<Body setIsLoggedIn={setIsLoggedIn} />}>
             {/* Displayed at same time as generic body */}

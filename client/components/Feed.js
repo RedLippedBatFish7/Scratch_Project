@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Cooking from '../assets/cooking.jpg';
-
 import Button from '@material-ui/core/Button';
 import { Stack } from '@mui/material';
 import { Outlet, Link } from 'react-router-dom';
 import ZipCodeGrab from './ZipCodeGrab';
-
+import MenuComponent from './MenuComponent';
+import FloatingCart from './FloatingCart';
+import axios from 'axios';
+import FeedCardsContainer from './FeedCardsContainer';
+import { useLocation } from 'react-router';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 //Styling
 const useStyles = makeStyles((theme) => ({
   body: {
     height: '100vh',
-
 
     display: 'flex',
     flexDirection: 'column',
@@ -29,18 +32,44 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: '900',
     fontSize: '40px',
     fontFamily: 'Nunito',
-
-
   },
 }));
 
 export default function Body(props) {
-  const classes = useStyles();
-  // const ZipCode = props.userZip;
-  // const UserId = props.userId;
-  const [zipCodeAssigned, setZipCodeAssigned] = useState(false);
-  const [feedActive, setFeedActive] = useState(true);
+  const fakeResponse = {
+    kitchenName: "Greg's Kitchen",
+    dishes: {
+      2: {
+        name: 'KFC',
+        description: 'finger licking good',
+        price: 15,
+        quantity: 30,
+      },
+      3: {
+        name: 'Sushi',
+        description: 'good stuff',
+        price: 35,
+        quantity: 100,
+      },
+    },
+  };
 
+  //Declare variables and state
+  const classes = useStyles();
+  const currentLocation = useLocation();
+  const ZipCode = props.userZip;
+  const UserId = props.buyerId;
+  const [zipCodeAssigned, setZipCodeAssigned] = useState(false);
+  const [floatCart, setfloatCart] = useState({ price: 0, dishes: {} });
+
+  useEffect(() => {
+    console.log('-------------------', floatCart);
+  }, [floatCart]);
+  // 1: {
+  //   name: ,
+  //   quantity: 0,
+  // }
+  const [feedActive, setFeedActive] = useState(true);
   // define state
   const [kitchens, setKitchens] = useState({});
 
@@ -57,31 +86,74 @@ export default function Body(props) {
 
   // useEffect to update the state exactly once here
 
+  useEffect(() => {
+    // axios to get state
+    axios
+      .get('/feed', {})
+      .then((res) => {
+        console.log(res.data);
+        setKitchens(res.data);
+      })
+      .catch((error) => {
+        console.log(`error in getting kitchen's feed`);
+        console.log(error);
+      })
+      .then(() => {
+        console.log(`what's going on?`);
+      });
+  }, []);
 
-  console.log('Feed component hit, rendered with a zipcode of ', props.userZip);
-  console.log('Buyer Id recognized as ', props.userId);
+  //Return back to DOM
+  // feed component would conditionally render either Cards or SellerPage
 
-  if (props.userZip || zipCodeAssigned) {
+  // if zip code not ready, display that and return early
+  console.log(ZipCode, zipCodeAssigned);
+  if (!ZipCode && !zipCodeAssigned) {
     return (
       <div className={classes.body}>
-        <div className={classes.heavyFont}>
-          {' '}
-          Successfully Loaded Zip as {zipCodeAssigned || props.userZip}!
-        </div>
+        <ZipCodeGrab buyerId={UserId} setZipCodeAssigned={setZipCodeAssigned} />
         <h1 className={classes.heavyFont}>{`Test feed`}</h1>
         <Outlet />
       </div>
     );
+  }
 
-  } else {
+  // if kitchens is empty, fetch isn't finished yet, so we don't want to make any decisions yet
+  if (Object.keys(kitchens).length === 0) {
+    console.log('zip good, fetch not complete');
+    return <div>LOADING</div>;
+  }
+
+  // if zip code good and fetch complete, some part of the feed will render
+  if (feedActive) {
+    if (currentLocation.pathname.split('/')[2]) {
+      console.log(
+        'woah, you shouldnt be here --------------------------------'
+      );
+      return <Navigate to='/feed' replace={true} />;
+    }
+
+    console.log('FEED IS ACTIVE -----');
     return (
+      <FeedCardsContainer
+        setFeedActive={setFeedActive}
+        kitchensFromFeed={kitchens}
+        setfloatCart={setfloatCart}
+        floatCart={floatCart}
+      />
+    );
+  } else {
+    console.log('Feed is inactive');
+    return (
+      //Display purposes only
       <div className={classes.body}>
-        <ZipCodeGrab
-          userId={props.userId}
-          setUserZip={props.setUserZip}
-          setZipCodeAssigned={setZipCodeAssigned}
+        <MenuComponent
+          // dishes={fakeResponse}
+          // ---------------------------------- this is necessary to pass functions to menucomponent, believe it or not
+          setfloatCart={setfloatCart}
+          floatCart={floatCart}
         />
-        <h1 className={classes.heavyFont}>{`Test feed`}</h1>
+        <FloatingCart floatCart={floatCart} />
         <Outlet />
       </div>
     );

@@ -46,8 +46,9 @@ export default function FeedContainer(props) {
   const ZipCode = props.userZip;
   const UserId = props.buyerId;
   const [zipCodeAssigned, setZipCodeAssigned] = useState(false);
-  const [kitchens, setKitchens] = useState([]);
+  // const [kitchens, setKitchens] = useState({});
 
+  console.log(props);
   //updating time format
 
   const dateFormat = (time) => {
@@ -55,17 +56,19 @@ export default function FeedContainer(props) {
   };
 
   // state is updated everytime fetch is getting new stuffs
-  useEffect(() => {
-    setKitchens(props.kitchensFromFeed);
-  }, [props.kitchensFromFeed]);
-  console.log(props);
+  // useEffect(() => {
+  //   setKitchens(props.kitchensFromFeed);
+  // }, [props.kitchensFromFeed]);
+  // console.log(props);
   // define state
 
   // for x in props passed from feed, add component to kitchens array
   const kitchensArr = [];
-  // console.log(kitchens);
-  for (let kitchenID in kitchens) {
-    const curKitchen = kitchens[kitchenID];
+  console.log(props.kitchensFromFeed);
+  // console.log(props.kitchensFromFeed);
+  for (let kitchenID in props.kitchensFromFeed) {
+    const curKitchen = props.kitchensFromFeed[kitchenID];
+    console.log(props.setfloatCart);
     if (curKitchen.market_enabled) {
       kitchensArr.push(
         <KitchenCard
@@ -76,11 +79,14 @@ export default function FeedContainer(props) {
           timeEnd={dateFormat(curKitchen.pickup_window_end)}
           bio={curKitchen.seller_bio}
           setFeedActive={props.setFeedActive}
+          // setfloatCart={props.setfloatCart}
+          // floatCart={props.floatCart}
         />
       );
     }
   }
 
+  console.log(kitchensArr);
   //Declare variables and state
   //Return back to DOM
   return (

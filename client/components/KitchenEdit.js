@@ -135,7 +135,7 @@ export default function Body(props) {
     console.log(props);
     // if (props.userType !== 'seller') navigate('/');
     axios
-      .get(`/db/getmenu/`)
+      .post(`/db/getmenu/`)
       .then((res) => {
         res = res.data;
 

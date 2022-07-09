@@ -40,7 +40,7 @@ menuController.createDish = async (req, res, next) => {
 
 menuController.getSellerMenu = async (req, res, next) => {
   //const { userId } = req.body;
-  const userId = req.cookies.userId;
+  const userId = req.body.sellerId || req.cookies.userId;
   const para = [userId];
   console.log(para);
 
