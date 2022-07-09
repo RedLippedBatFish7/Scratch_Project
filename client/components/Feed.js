@@ -5,6 +5,8 @@ import Button from "@material-ui/core/Button";
 import { Stack } from "@mui/material";
 import { Outlet, Link } from "react-router-dom";
 import ZipCodeGrab from "./ZipCodeGrab";
+import MenuComponent from "./MenuComponent";
+import FloatingCart from "./FloatingCart";
 
 //Styling
 const useStyles = makeStyles((theme) => ({
@@ -41,11 +43,8 @@ export default function Body(props) {
   if (ZipCode || zipCodeAssigned) {
     return (
       <div className={classes.body}>
-        <div className={classes.heavyFont}>
-          {" "}
-          Successfully Loaded Zip as {zipCodeAssigned || ZipCode}!
-        </div>
-        <h1 className={classes.heavyFont}>{`Test feed`}</h1>
+        <MenuComponent />
+        <FloatingCart />
         <Outlet />
       </div>
     );
