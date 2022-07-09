@@ -27,15 +27,10 @@ export default function Login(props) {
   // set form state
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // fetch('auth/login').then((response) => {
-    //   console.log(response);
-    // });
-    // fetch here
     axios
       .post('/auth/login', {
         username,
@@ -49,7 +44,9 @@ export default function Login(props) {
           props.setUserType('seller');
           props.setUserZip(response.data.zip);
           props.setUserId(response.data.user_id);
-          navigate('/');
+          document.cookie = `userId=${response.data.user_id}`;
+          document.cookie = `userZip=${response.data.zip}`;
+          document.cookie = `userType=seller`;
         } else console.log(response.data);
       })
       .catch((error) => {
@@ -58,7 +55,6 @@ export default function Login(props) {
         console.log(error);
       })
       .then(() => {
-        console.log('??????');
         // always executed
       });
   };

@@ -17,19 +17,6 @@ import MenuItemEdit from './MenuItemEdit';
 import CuisineSelect from './CuisineSelect';
 import { width } from '@mui/system';
 
-/* 
-
-should the "select available times for pickup TOMORROW" be on this page?
-and it's tomorrow, right?
-
-am I missing anything else that should be on this page? Remember, it's the Seller's kitchen page.
-
-I guess somewhere I need to add a place to have their address?
-
-Oh and somewhere to "enable" the shop so they'll appear on the market feed
-
-*/
-
 //Styling
 const useStyles = makeStyles((theme) => ({
   body: {
@@ -54,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   kitchenNameContainer: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   form: {
     display: 'flex',
@@ -122,29 +109,36 @@ const useStyles = makeStyles((theme) => ({
 export default function Body(props) {
   //Declare variables and state
   const classes = useStyles();
-  const navigate = useNavigate();
   const [dishesArr, setDishesArr] = useState({});
   const [changesObj, setChangesObj] = useState({});
   const [newDishNum, setNewDishNum] = useState(-1);
   const [updatingKitchenName, setUpdatingKitchenName] = useState(false);
   const [selectedCuisines, setSelectedCuisines] = useState(false);
   const [cuisinesUpdated, setCuisinesUpdated] = useState(false);
+  const [marketEnabled, setMarketEnabled] = useState(false);
+  const [pickupWindow, setPickupWindow] = useState({});
+  const [address, setAddress] = useState({});
+  const [stateUpdates, setStateUpdates] = useState({
+    address: false,
+    pickupWindow: false,
+    marketEnabled: false,
+  });
   const [kitchenName, setKitchenName] = useState({
     first: '',
     old: '',
     current: '',
   });
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const refresh = () => {
     // redirect if not a seller ? I don't think I need this
     console.log(props);
-    if (props.userType !== 'seller') navigate('/');
+    // if (props.userType !== 'seller') navigate('/');
     axios
-      .post(`/db/getmenu/`, {
-        userId: props.userId,
-      })
+      .get(`/db/getmenu/`)
       .then((res) => {
         res = res.data;
+
         console.log(res);
         const kname = res.kitchenName
           ? res.kitchenName
@@ -154,9 +148,31 @@ export default function Body(props) {
           old: kname,
           first: kname,
         });
-        setDishesArr(res.dishes);
-        setSelectedCuisines('Mexican, Italian'.split(', '));
-        // setSelectedCuisines(res.cuisines.split(', '))
+
+        setDishesArr(res.dishes.null ? {} : res.dishes);
+
+        setSelectedCuisines(res.cuisine ? res.cuisine.split(', ') : []);
+
+        setStateUpdates({
+          pickupWindow: false,
+          marketEnabled: false,
+          address: false,
+        });
+
+        console.log(res.market_enabled);
+        setMarketEnabled(!res.market_enabled ? false : true);
+
+        setPickupWindow({
+          pickup_window_start: res.pickup_window_start,
+          pickup_window_end: res.pickup_window_end,
+        });
+
+        setAddress({ ...res.address });
+
+        setChangesObj({});
+        setIsLoaded(true);
+
+        //
       })
       .catch((error) => {
         // handle error
@@ -192,7 +208,10 @@ export default function Body(props) {
     if (
       Object.keys(changesObj).length ||
       kitchenName.first !== kitchenName.current ||
-      cuisinesUpdated === true
+      cuisinesUpdated === true ||
+      stateUpdates.address ||
+      stateUpdates.pickupWindow ||
+      stateUpdates.marketEnabled
     ) {
       console.log({
         kitchenName:
@@ -209,15 +228,14 @@ export default function Body(props) {
             kitchenName.first !== kitchenName.current
               ? kitchenName.current
               : null,
-          selectedCuisines: cuisinesUpdated
-            ? selectedCuisines.join(', ')
-            : null,
+          cuisine: cuisinesUpdated ? selectedCuisines.join(', ') : null,
           menuChanges: Object.keys(changesObj).length ? changesObj : null,
+          address: stateUpdates.address ? address : null,
+          windowTimes: stateUpdates.pickupWindow ? pickupWindow : null,
+          market_enabled: stateUpdates.marketEnabled ? marketEnabled : null,
         })
-        .then((res) => res.json())
         .then((res) => {
-          // better yet, put useeffect stuff into a refresh function, and call it from useeffect
-          // then call that here
+          refresh();
         })
         .catch((error) => {
           // handle error
@@ -226,12 +244,6 @@ export default function Body(props) {
         })
         .then(() => {
           // always executed
-          refresh();
-          setChangesObj({});
-          setKitchenName({
-            ...kitchenName,
-            first: kitchenName.current,
-          });
         });
     } else console.log('no changes');
   };
@@ -349,7 +361,11 @@ export default function Body(props) {
       </div>
     );
   }
-  const kitchenUpper = (
+
+  // wait for state to set before setting default values
+  const kitchenUpper = !isLoaded ? (
+    <div></div>
+  ) : (
     <div className={classes.kitchenUpper}>
       {kitchenNameElement}
       <div className={classes.kitchenStats}>
@@ -364,25 +380,73 @@ export default function Body(props) {
             label={'Start Pickup'}
             type={'time'}
             InputLabelProps={{ shrink: true }}
+            defaultValue={pickupWindow.pickup_window_start}
+            onChange={(e) => {
+              setPickupWindow({
+                ...pickupWindow,
+                pickup_window_start: e.target.value,
+              });
+              setStateUpdates({ ...stateUpdates, pickupWindow: true });
+            }}
           />
           <TextField
             className={classes.timeOpItem}
             label={'End Pickup'}
             type={'time'}
             InputLabelProps={{ shrink: true }}
+            defaultValue={pickupWindow.pickup_window_end}
+            onChange={(e) => {
+              setPickupWindow({
+                ...pickupWindow,
+                pickup_window_end: e.target.value,
+              });
+              setStateUpdates({ ...stateUpdates, pickupWindow: true });
+            }}
           />
         </div>
         <div className={classes.addressFull}>
           <h3 style={{ marginBottom: 0 }}>Pickup Address</h3>
           <span>
-            <TextField label={'Address'} className={classes.topAddress} />
+            <TextField
+              label={'Address'}
+              className={classes.topAddress}
+              defaultValue={address.seller_street_name}
+              onChange={(e) => {
+                setAddress({ ...address, seller_street_name: e.target.value });
+                setStateUpdates({ ...stateUpdates, address: true });
+              }}
+            />
           </span>
           <span>
-            <TextField label={'City'} className={classes.topAddress} />
+            <TextField
+              label={'City'}
+              className={classes.topAddress}
+              defaultValue={address.seller_city}
+              onChange={(e) => {
+                setAddress({ ...address, seller_city: e.target.value });
+                setStateUpdates({ ...stateUpdates, address: true });
+              }}
+            />
           </span>
           <span>
-            <TextField label={'State'} className={classes.leftAddress} />
-            <TextField label={'Zip'} className={classes.rightAddress} />
+            <TextField
+              label={'State'}
+              className={classes.leftAddress}
+              defaultValue={address.seller_state}
+              onChange={(e) => {
+                setAddress({ ...address, seller_state: e.target.value });
+                setStateUpdates({ ...stateUpdates, address: true });
+              }}
+            />
+            <TextField
+              label={'Zip'}
+              className={classes.rightAddress}
+              defaultValue={address.seller_zip_code}
+              onChange={(e) => {
+                setAddress({ ...address, seller_zip_code: e.target.value });
+                setStateUpdates({ ...stateUpdates, address: true });
+              }}
+            />
           </span>
         </div>
       </div>
@@ -403,8 +467,22 @@ export default function Body(props) {
           </div>
           <div className={classes.submitContainer}>
             <FormControlLabel
-              control={<Switch defaultChecked />}
+              control={<Switch />}
+              checked={marketEnabled}
               label='Toggle Market Visibility'
+              onClick={(e) => {
+                if (
+                  kitchenName.current &&
+                  address.seller_street_name &&
+                  address.seller_zip_code &&
+                  pickupWindow.pickup_window_start &&
+                  pickupWindow.pickup_window_end &&
+                  Object.keys(dishesArr).length
+                ) {
+                  setStateUpdates({ ...stateUpdates, marketEnabled: true });
+                  setMarketEnabled(e.target.checked);
+                }
+              }}
             />
             <IconButton onClick={addNewDish}>
               <AddCircle /> {'New Dish'}

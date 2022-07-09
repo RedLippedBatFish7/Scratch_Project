@@ -8,7 +8,7 @@ import {
 } from '@react-google-maps/api';
 
 {
-  /* 
+  /*   --  HOW TO USE  --
 
 Mappy should be ready to go out the box, just set its props like below:
 
@@ -77,10 +77,13 @@ function Mappy(props) {
     googleMapsApiKey: process.env.REACT_APP_MAPS_API,
     libraries: ['places'],
   });
+  console.log(isLoaded);
 
   // if map is loaded AND route hasn't been created, create route
   if (isLoaded && !routeIsLoaded) {
+    // setTimeout(() => {
     findRoute();
+    // }, 1500);
   }
 
   //   if the route hasn't been created, display loading view, same size as map
@@ -105,13 +108,19 @@ function Mappy(props) {
     );
   }
 
+  // when findRoute runs, if route has been loaded,
+  if (routeIsLoaded) {
+    // here you could set upperstate to pass up info about the route
+    console.log(routeStats);
+  }
+
   // else, show map
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
       center={center}
       zoom={15}
-      options={{ streetViewControl: false, mapTypeControl: true }}
+      options={{ streetViewControl: true, mapTypeControl: true }}
     >
       {/* if we have a route made, display it */}
       {directionResp && <DirectionsRenderer directions={directionResp} />}

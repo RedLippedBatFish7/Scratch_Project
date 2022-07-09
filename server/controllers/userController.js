@@ -1,14 +1,14 @@
-const db = require("../../database/pg_model.js");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const db = require('../../database/pg_model.js');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const userController = {};
-require("dotenv").config();
+require('dotenv').config();
 
 userController.createSeller = async (req, res, next) => {
   // Checking the usertype to decide which controller it has to pass through (createSeller vs createBuyer)
-  if (req.body.userType === "buyer") return next();
+  if (req.body.userType === 'buyer') return next();
   try {
-    const props = ["seller_email", "password", "seller_nickname"];
+    const props = ['seller_email', 'password', 'seller_nickname'];
     const values = [];
     // storing the values of the above keys which are received in the body of the request in the values array
     for (let i = 0; i < props.length; i++) {
@@ -20,8 +20,8 @@ userController.createSeller = async (req, res, next) => {
     values[1] = hashedPassword;
     // console.log("values: ", values);
     const sqlQuery = `INSERT INTO public.sellers 
-    (seller_email, password, seller_nickname) 
-    VALUES ($1, $2, $3) 
+    (seller_email, password, seller_nickname, market_enabled) 
+    VALUES ($1, $2, $3, NULL) 
     RETURNING *;`;
     const data = await db.query(sqlQuery, values);
     //res.locals.seller = data.rows[0];
@@ -34,9 +34,9 @@ userController.createSeller = async (req, res, next) => {
 };
 
 userController.createBuyer = async (req, res, next) => {
-  if (req.body.userType === "seller") return next();
+  if (req.body.userType === 'seller') return next();
   try {
-    const props = ["buyer_email", "password", "buyer_nickname"];
+    const props = ['buyer_email', 'password', 'buyer_nickname'];
     const values = [];
     // storing the values of the above keys which are received in the body of the request in the values array
     for (let i = 0; i < props.length; i++) {
@@ -65,23 +65,23 @@ userController.login = async (req, res, next) => {
   const { username, password, userType } = req.body;
   try {
     // If "@" exists then an email has been sent
-    let userLoginType = "nickname";
-    if (username.includes("@")) userLoginType = "email";
+    let userLoginType = 'nickname';
+    if (username.includes('@')) userLoginType = 'email';
 
     const userInfo = [username];
     let sqlQueryUsername;
-    const type = userType === "seller" ? "seller" : "buyer";
+    const type = userType === 'seller' ? 'seller' : 'buyer';
     // If an email has been sent then we need to search the table using the email column
-    if (userLoginType === "email") {
+    if (userLoginType === 'email') {
       // checking if the user is a seller or buyer to alter the query
-      if (userType === "seller") {
+      if (userType === 'seller') {
         sqlQueryUsername = `select * from public.sellers where seller_email = $1`;
       } else {
         sqlQueryUsername = `select * from public.buyers where buyer_email = $1`;
       }
     } else {
       // If the nickname was sent instead of an email
-      if (userType === "seller") {
+      if (userType === 'seller') {
         sqlQueryUsername = `select * from public.sellers where seller_nickname = $1`;
       } else {
         sqlQueryUsername = `select * from public.buyers where buyer_nickname = $1`;
@@ -91,7 +91,7 @@ userController.login = async (req, res, next) => {
     console.log(data.rows[0]);
     // Checks if data has been found or not
     if (data.rows[0] === undefined)
-      return res.send("Username/Email does not exist");
+      return res.send('Username/Email does not exist');
     // If the username/emaiil has been found, it checks if the password matches
     if (await bcrypt.compare(password, data.rows[0].password)) {
       const zip = `${type}_zip_code`;
@@ -102,7 +102,7 @@ userController.login = async (req, res, next) => {
       };
       return next();
     } else {
-      return res.send("Password is incorrect");
+      return res.send('Password is incorrect');
     }
   } catch (error) {
     return next(error);
@@ -123,16 +123,18 @@ userController.sellerInformation = async (req, res, next) => {
   }
 };
 
-userController.buyerZip = async (req, res, next) => {
+userController.userZip = async (req, res, next) => {
   // destructuring the request body
-  const { zipcode, userid } = req.body;
-  details = [zipcode, userid];
-  console.log("request came in as", details);
+  const userId = req.cookies.userId;
+  const userType = req.cookies.userType;
+  const { zipcode } = req.body;
+  details = [zipcode, userId];
+
   try {
     //updating the zipcode using the user id
-    const sqlZipQuery = `update public.buyers 
-    set buyer_zip_code = $1 
-    where pk_buyer_id = $2`;
+    const sqlZipQuery = `update ${userType}s 
+      set ${userType}_zip_code = $1 
+      where pk_${userType}_id = $2`;
     const data = await db.query(sqlZipQuery, details);
     return next();
   } catch (error) {

@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import SortIcon from '@material-ui/icons/Sort';
-import { AppBar, IconButton, Toolbar } from '@material-ui/core';
+import { AppBar, IconButton, Toolbar, Tooltip, Zoom } from '@material-ui/core';
 import DiningIcon from '@material-ui/icons/LocalDining';
 import { fontWeight } from '@mui/system';
 import { Outlet, Link } from 'react-router-dom';
+import SortIcon from '@material-ui/icons/Sort';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 
 const useStyles = makeStyles((theme) => ({
   appbar: {
@@ -22,7 +25,8 @@ const useStyles = makeStyles((theme) => ({
   },
   icon: {
     color: 'black',
-    fontSize: '2rem',
+    margin: '10px',
+    // fontSize: '4rem',
   },
   logoBlack: {
     color: '#2c3e50',
@@ -42,6 +46,53 @@ const useStyles = makeStyles((theme) => ({
 export default function Nav(props) {
   const classes = useStyles();
 
+  let logOutIconElement;
+  let myAccountIconElement;
+
+  // if logout has been passed, it means we're signed in
+  if (props.logOut) {
+    logOutIconElement = (
+      <Tooltip
+        title={<h2 style={{ color: 'white' }}>Log Out</h2>}
+        TransitionComponent={Zoom}
+      >
+        <IconButton onClick={props.logOut}>
+          <LogoutIcon sx={{ fontSize: 33 }} className={classes.icon} />
+        </IconButton>
+      </Tooltip>
+    );
+
+    // if seller
+    if (props.userType === 'seller')
+      myAccountIconElement = (
+        <Tooltip
+          title={<h2 style={{ color: 'white' }}>My Kitchen</h2>}
+          TransitionComponent={Zoom}
+        >
+          <IconButton component={Link} to='/MyKitchen'>
+            <RestaurantMenuIcon
+              sx={{ fontSize: 33 }}
+              className={classes.icon}
+            />
+          </IconButton>
+        </Tooltip>
+      );
+    else
+      myAccountIconElement = (
+        <Tooltip
+          title={<h2 style={{ color: 'white' }}>My Account</h2>}
+          TransitionComponent={Zoom}
+        >
+          <IconButton component={Link} to='/'>
+            <ManageAccountsIcon
+              sx={{ fontSize: 33 }}
+              className={classes.icon}
+            />
+          </IconButton>
+        </Tooltip>
+      );
+  }
+
   return (
     <div>
       <AppBar className={classes.appbar} elevation={0}>
@@ -52,9 +103,10 @@ export default function Nav(props) {
               <span className={classes.logoRed}>Pans</span> <DiningIcon />
             </h1>
           </Link>
-          <IconButton component={Link} to='/MyKitchen'>
-            <SortIcon className={classes.icon} />
-          </IconButton>
+          <div>
+            {myAccountIconElement}
+            {logOutIconElement}
+          </div>
         </Toolbar>
       </AppBar>
       <Outlet />
