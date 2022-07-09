@@ -7,6 +7,7 @@ import { Outlet, Link } from "react-router-dom";
 import ZipCodeGrab from "./ZipCodeGrab";
 import MenuComponent from "./MenuComponent";
 import FloatingCart from "./FloatingCart";
+import axios from "axios";
 
 //Styling
 const useStyles = makeStyles((theme) => ({
@@ -31,11 +32,52 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Body(props) {
+  const fakeResponse = {
+    kitchenName: "Greg's Kitchen",
+    dishes: {
+      2: {
+        name: "KFC",
+        description: "finger licking good",
+        price: 15,
+        quantity: 30,
+      },
+      3: {
+        name: "Sushi",
+        description: "good stuff",
+        price: 35,
+        quantity: 100,
+      },
+    },
+  };
+
+  //Get request to server for restaurant data
+  // useEffect(() => {
+  //   axios.get("feed").then((response) => {
+  //     //response.data contains seller id, name, seller number
+  //     response.data.forEach((e, i) => {
+  //       console.log("element", e);
+  //       setMenu((old) => [
+  //         ...old,
+  //         <MenuComponent
+  //           kitchenName={e.kitchen_name}
+  //           street={e.seller_street_name}
+  //         />,
+  //       ]);
+  //     });
+  //   });
+  // }, []);
+
   //Declare variables and state
   const classes = useStyles();
   const ZipCode = props.userZip;
   const UserId = props.buyerId;
   const [zipCodeAssigned, setZipCodeAssigned] = useState(false);
+  const [floatPrice, setFloatPrice] = useState({ price: 0, dishes: 0 });
+
+  // 1: {
+  //   name: ,
+  //   quantity: 0,
+  // }
 
   console.log("Feed component hit, rendered with a zipcode of ", ZipCode);
   console.log("Buyer Id recognized as ", UserId);
@@ -43,8 +85,12 @@ export default function Body(props) {
   if (ZipCode || zipCodeAssigned) {
     return (
       <div className={classes.body}>
-        <MenuComponent />
-        <FloatingCart />
+        <MenuComponent
+          dishes={fakeResponse}
+          setFloatPrice={setFloatPrice}
+          floatPrice={floatPrice}
+        />
+        <FloatingCart floatPrice={floatPrice} />
         <Outlet />
       </div>
     );

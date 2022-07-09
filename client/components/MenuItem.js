@@ -11,17 +11,28 @@ const useStyles = makeStyles((theme) => ({
     margin: "10px",
   },
 }));
-export default function () {
+export default function (props) {
   const classes = useStyles();
   return (
     <Paper elevation={5} className={classes.menuitem}>
       <Stack direction="row" justifyContent="space-between">
-        <h3>Kyle's Breakfast Scrambla - $11.50</h3>
-        <h3>Quantity: 30</h3>
+        <h3>
+          {props.name} - {props.price}
+        </h3>
+        <h3>Quantity: {props.quantity}</h3>
       </Stack>
       <Stack direction="row" justifyContent="space-between">
-        <p>Start your morning right with the breakfast scrambla</p>
-        <Button variant="contained" color="secondary">
+        <p>{props.description}</p>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() =>
+            props.setFloatPrice({
+              ...props.floatPrice,
+              price: props.floatPrice.price + props.price,
+            })
+          }
+        >
           Add to Cart
         </Button>
       </Stack>

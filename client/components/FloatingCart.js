@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper } from "@material-ui/core";
 import { Stack } from "@mui/material";
 import MenuItem from "./MenuItem";
+import { PropaneSharp } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   footer: {
@@ -14,15 +15,16 @@ const useStyles = makeStyles((theme) => ({
     padding: "10px",
   },
 }));
-export default function () {
+export default function (props) {
   const classes = useStyles();
   return (
     <div>
       <Paper className={classes.footer}>
         <Stack>
+          <h1>${props.floatPrice.price}</h1>
           <h3> Current Cart: </h3>
           <h3> Kyle's Scrambla </h3>
-          <Button>Checkout</Button>
+          <Button color="primary">Checkout</Button>
         </Stack>
       </Paper>
     </div>
