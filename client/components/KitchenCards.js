@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { Outlet, Link } from 'react-router-dom';
 import { Box } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
 import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -44,13 +42,14 @@ const Card = (props) => {
   const navigate = useNavigate();
 
   // set button redirecting to placing menu page of the kitchen
-  const handleSubmit = (e) => {
+  const onClick = (e) => {
     e.preventDefault();
-
+    //Redirecting to Seller Page when user click button
+    props.setFeedActive(false);
     //navigate to /feed/sellerID
-    navigate(`/feed/:${props.kitchenID}`);
+    navigate(`/feed/${props.kitchenID}`);
   };
-
+  // console.log(props);
   return (
     <div>
       <Box
@@ -63,7 +62,6 @@ const Card = (props) => {
         onMouseOut={() => {
           setShadow(2);
         }}
-        onSubmit={handleSubmit}
       >
         <div
           id='kitchenCard'
@@ -75,7 +73,7 @@ const Card = (props) => {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              margin: -10,
+              margin: 0,
               paddingBottom: 0,
             }}
           >
@@ -85,7 +83,7 @@ const Card = (props) => {
             id='kitchenBio'
             style={{
               display: 'flex',
-              justifyContent: 'left',
+              justifyContent: 'center',
               alignItems: 'center',
               marginLeft: 25,
               marginRight: 25,
@@ -111,11 +109,19 @@ const Card = (props) => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                borderRadius: 10,
               }}
             >
-              <b>Pick-up Window:</b> <i>{props.timeOps}</i>
+              <b>Pick-up Window:</b>
+              <i>
+                {props.timeStart} - {props.timeEnd}
+              </i>
             </div>
-            <Button className={classes.buttons} variant='contained'>
+            <Button
+              className={classes.buttons}
+              variant='contained'
+              onClick={onClick}
+            >
               Order Here
             </Button>
           </div>

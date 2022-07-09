@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [userZip, setUserZip] = useState();
   const [buyerId, setBuyerId] = useState();
 
@@ -47,6 +47,7 @@ const App = () => {
               path='/feed'
               element={<Feed userZip={userZip} buyerId={buyerId} />}
             />
+            <Route path='/feed/:id' element={<SignUp />} />
           </Route>
         </Routes>
       </div>
