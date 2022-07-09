@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Cooking from '../assets/cooking.jpg';
+
+import Button from '@material-ui/core/Button';
+import { Stack } from '@mui/material';
 import { Outlet, Link } from 'react-router-dom';
-import axios from 'axios';
 import ZipCodeGrab from './ZipCodeGrab';
-import FeedCardsContainer from './FeedCardsContainer';
+
 
 //Styling
 const useStyles = makeStyles((theme) => ({
   body: {
     height: '100vh',
-    width: '100%',
+
+
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -26,25 +29,15 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: '900',
     fontSize: '40px',
     fontFamily: 'Nunito',
-  },
-  feedItem: {
-    marginTop: '15px',
-    width: '100%',
-    padding: '5px',
-    maxWidth: '800px',
-    backgroundColor: '#FA8072',
-  },
-  buttons: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around',
+
+
   },
 }));
 
 export default function Body(props) {
   const classes = useStyles();
-  const ZipCode = props.userZip;
-  const UserId = props.buyerId;
+  // const ZipCode = props.userZip;
+  // const UserId = props.userId;
   const [zipCodeAssigned, setZipCodeAssigned] = useState(false);
   const [feedActive, setFeedActive] = useState(true);
 
@@ -64,40 +57,30 @@ export default function Body(props) {
 
   // useEffect to update the state exactly once here
 
-  useEffect(() => {
-    // axios to get state
-    axios
-      .get('/feed', {})
-      .then((res) => {
-        setKitchens(res.data);
-      })
-      .catch((error) => {
-        console.log(`error in getting kitchen's feed`);
-        console.log(error);
-      })
-      .then(() => {
-        console.log(`what's going on?`);
-      });
-  }, []);
 
-  //Return back to DOM
-  // feed component would conditionally render either Cards or SellerPage
-  if (ZipCode || zipCodeAssigned) {
-    // check for zipCode, if exists, then render the Feed container
-    if (feedActive) {
-      console.log('FEED IS ACTIVE -----');
-      return (
-        <FeedCardsContainer
-          setFeedActive={setFeedActive}
-          kitchensFromFeed={kitchens}
-        />
-      );
-    }
-    if (!feedActive) return <div>SELLER PAGE HERE</div>;
+  console.log('Feed component hit, rendered with a zipcode of ', props.userZip);
+  console.log('Buyer Id recognized as ', props.userId);
+
+  if (props.userZip || zipCodeAssigned) {
+    return (
+      <div className={classes.body}>
+        <div className={classes.heavyFont}>
+          {' '}
+          Successfully Loaded Zip as {zipCodeAssigned || props.userZip}!
+        </div>
+        <h1 className={classes.heavyFont}>{`Test feed`}</h1>
+        <Outlet />
+      </div>
+    );
+
   } else {
     return (
       <div className={classes.body}>
-        <ZipCodeGrab buyerId={UserId} setZipCodeAssigned={setZipCodeAssigned} />
+        <ZipCodeGrab
+          userId={props.userId}
+          setUserZip={props.setUserZip}
+          setZipCodeAssigned={setZipCodeAssigned}
+        />
         <h1 className={classes.heavyFont}>{`Test feed`}</h1>
         <Outlet />
       </div>

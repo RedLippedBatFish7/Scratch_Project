@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
+
 // import { Route, NavLink, HashRouter } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { CssBaseline, makeStyles } from '@material-ui/core';
@@ -10,6 +12,11 @@ import SignUp from './components/SignUp';
 import SellerBody from './components/SellerBody';
 import SellerLogin from './components/SellerLogin';
 import SellerSignUp from './components/SellerSignUp';
+
+import KitchenEdit from './components/KitchenEdit';
+import Account from './components/KitchenEdit';
+import Mappy from './components/mappy';
+
 // // import './stylesheets/styles.scss';
 
 import { Routes, Route, Navigate } from 'react-router-dom';
@@ -29,9 +36,58 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [userZip, setUserZip] = useState();
-  const [buyerId, setBuyerId] = useState();
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState('');
+  const [userId, setUserId] = useState('');
+  const [userZip, setUserZip] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+
+  // read cookies to see if logged in currently
+  useEffect(() => {
+    // read cookie. where we have cookies, set state
+    // userId
+    let userIdCookie = document.cookie.split('; ').filter((el) => {
+      return el.split('=')[0] === 'userId';
+    })[0];
+    userIdCookie = userIdCookie ? userIdCookie.split('=')[1] : false;
+    if (userIdCookie) setUserId(Number(userIdCookie));
+
+    // userType
+    let userTypeCookie = document.cookie.split('; ').filter((el) => {
+      return el.split('=')[0] === 'userType';
+    })[0];
+    userTypeCookie = userTypeCookie ? userTypeCookie.split('=')[1] : false;
+    if (userTypeCookie) setUserType(userTypeCookie);
+
+    // userZip
+    let UserZipCookie = document.cookie.split('; ').filter((el) => {
+      return el.split('=')[0] === 'userZip';
+    })[0];
+    UserZipCookie = UserZipCookie ? UserZipCookie.split('=')[1] : false;
+    if (UserZipCookie) setUserZip(Number(UserZipCookie));
+
+    const cookiesArr = [userIdCookie, userTypeCookie, UserZipCookie];
+    console.log('entered with ', cookiesArr);
+    if (userIdCookie) setIsLoggedIn(true);
+
+    // change state so we rerender
+    setLoaded(true);
+  }, []);
+
+  const logOut = () => {
+    console.log('logging out');
+    document.cookie = 'userId =';
+    document.cookie = 'userType =';
+    document.cookie = 'userZip =';
+    document.cookie = 'token =';
+
+    setIsLoggedIn(false);
+    setUserType('');
+    setUserId('');
+    setUserZip(0);
+  };
+
 
   if (isLoggedIn) {
     return (
@@ -39,16 +95,34 @@ const App = () => {
         <CssBaseline />
         <Routes>
           {/* This route will see we're on "/" and auto-redirect to /feed. "/" isn't possible while logged in */}
-          <Route path='/' element={<Navigate to='/feed' replace={true} />} />
+
+          <Route
+            path='/'
+            exact
+            element={<Navigate to='/feed' replace={true} />}
+          />
           {/* Nav bar */}
-          <Route path='/' element={<Nav setIsLoggedIn={setIsLoggedIn} />}>
+          <Route path='/' element={<Nav logOut={logOut} userType={userType} />}>
             {/* buyer feed */}
             <Route
               path='/feed'
-              element={<Feed userZip={userZip} buyerId={buyerId} />}
+              element={
+                <Feed
+                  userZip={userZip}
+                  userId={userId}
+                  setUserZip={setUserZip}
+                />
+              }
+            />
+            <Route path='/account' element={<Account userType={userType} />} />
+            <Route
+              path='/MyKitchen'
+              element={<KitchenEdit userType={userType} userId={userId} />}
+
             />
             <Route path='/feed/:id' element={<SignUp />} />
           </Route>
+          <Route path='/*' element={<Navigate to='/' replace={true} />} />
         </Routes>
       </div>
     );
@@ -58,7 +132,9 @@ const App = () => {
     <div className={classes.webmain}>
       <CssBaseline />
       <Routes>
-        <Route path='/' element={<Nav setIsLoggedIn={() => {}} />}>
+
+        <Route path='/' element={<Nav />}>
+
           {/* Displayed at same time as nav bar */}
           <Route path='/' element={<Body setIsLoggedIn={setIsLoggedIn} />}>
             {/* Displayed at same time as generic body */}
@@ -67,14 +143,32 @@ const App = () => {
               element={
                 <Login
                   setIsLoggedIn={setIsLoggedIn}
+                  setUserType={setUserType}
                   setUserZip={setUserZip}
-                  setBuyerId={setBuyerId}
+                  setUserId={setUserId}
                 />
               }
             />
             <Route
               path='/signup'
               element={<SignUp setIsLoggedIn={setIsLoggedIn} />}
+              // element={
+              //   <span
+              //     style={{
+              //       height: '600px',
+              //       width: '700px',
+              //       // overflow: 'hidden',
+              //     }}
+              //   >
+              //     <Mappy
+              //       sellerAddr={'15108'}
+              //       buyerAddr={'15222'}
+              //       mapsize={['100%', '100%']}
+              //       loadSize={3}
+              //       loadColor='rgb(255,255,255,0.7)'
+              //     />
+              //   </span>
+              // }
             />
           </Route>
           <Route
@@ -87,7 +181,9 @@ const App = () => {
               element={
                 <SellerLogin
                   setIsLoggedIn={setIsLoggedIn}
+                  setUserType={setUserType}
                   setUserZip={setUserZip}
+                  setUserId={setUserId}
                 />
               }
             />

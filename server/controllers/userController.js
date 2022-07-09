@@ -20,8 +20,8 @@ userController.createSeller = async (req, res, next) => {
     values[1] = hashedPassword;
     // console.log("values: ", values);
     const sqlQuery = `INSERT INTO public.sellers 
-    (seller_email, password, seller_nickname) 
-    VALUES ($1, $2, $3) 
+    (seller_email, password, seller_nickname, market_enabled) 
+    VALUES ($1, $2, $3, NULL) 
     RETURNING *;`;
     const data = await db.query(sqlQuery, values);
     //res.locals.seller = data.rows[0];
@@ -123,16 +123,20 @@ userController.sellerInformation = async (req, res, next) => {
   }
 };
 
-userController.buyerZip = async (req, res, next) => {
+userController.userZip = async (req, res, next) => {
   // destructuring the request body
-  const { zipcode, userid } = req.body;
-  details = [zipcode, userid];
-  console.log('request came in as', details);
+
+  const userId = req.cookies.userId;
+  const userType = req.cookies.userType;
+  const { zipcode } = req.body;
+  details = [zipcode, userId];
+
+
   try {
     //updating the zipcode using the user id
-    const sqlZipQuery = `update public.buyers 
-    set buyer_zip_code = $1 
-    where pk_buyer_id = $2`;
+    const sqlZipQuery = `update ${userType}s 
+      set ${userType}_zip_code = $1 
+      where pk_${userType}_id = $2`;
     const data = await db.query(sqlZipQuery, details);
     return next();
   } catch (error) {
