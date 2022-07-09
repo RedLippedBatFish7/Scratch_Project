@@ -120,21 +120,21 @@ export default function Body(props) {
           kitchensFromFeed={kitchens}
         />
       );
+    } else {
+      console.log("Feed is inactive");
+      return (
+        //Display purposes only
+        <div className={classes.body}>
+          <MenuComponent
+            dishes={fakeResponse}
+            setFloatPrice={setFloatPrice}
+            floatPrice={floatPrice}
+          />
+          <FloatingCart floatPrice={floatPrice} />
+          <Outlet />
+        </div>
+      );
     }
-    if (!feedActive) return <div>SELLER PAGE HERE</div>;
-
-    return (
-      //Display purposes only
-      <div className={classes.body}>
-        <MenuComponent
-          dishes={fakeResponse}
-          setFloatPrice={setFloatPrice}
-          floatPrice={floatPrice}
-        />
-        <FloatingCart floatPrice={floatPrice} />
-        <Outlet />
-      </div>
-    );
     // check for zipCode, if exists, then render the Feed container
   } else {
     return (

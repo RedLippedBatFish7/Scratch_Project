@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Paper } from "@material-ui/core";
 import { Stack } from "@mui/material";
 import MenuItem from "./MenuItem";
+import { useLocation } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
   papermain: {
@@ -40,17 +41,20 @@ const destructure = (object, props) => {
   return menuUnit;
 };
 export default function MenuComponent(props) {
+  console.log("sup im the menu component");
   const [restaurantName, setRestaurantName] = useState("");
   const classes = useStyles();
-  const dishes = props.dishes.dishes;
+  const newLocation = useLocation();
+  console.log(newLocation);
+  //const dishes = props.dishes.dishes;
   return (
     <Paper className={classes.paperbody}>
-      <Stack className={classes.papermain}>
-        <h2>{props.dishes.kitchenName}</h2>
-        <span>{props.dishes.street}</span>
+      {/* //   <Stack className={classes.papermain}>
+         <h2>{props.dishes.kitchenName}</h2>
+         <span>{props.dishes.street}</span>
         <span>8:00AM - 10:00AM ET</span>
-      </Stack>
-      {destructure(dishes, props)}
+       </Stack>
+       {destructure(dishes, props)} */}
     </Paper>
   );
 }
