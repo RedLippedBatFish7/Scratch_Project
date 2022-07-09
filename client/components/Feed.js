@@ -16,7 +16,7 @@ import { useNavigate, Navigate } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   body: {
     height: '100vh',
-    width: '100%',
+
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -32,18 +32,8 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: '900',
     fontSize: '40px',
     fontFamily: 'Nunito',
-  },
-  feedItem: {
-    marginTop: '15px',
-    width: '100%',
-    padding: '5px',
-    maxWidth: '800px',
-    backgroundColor: '#FA8072',
-  },
-  buttons: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around',
+
+
   },
 }));
 
@@ -124,10 +114,12 @@ export default function Body(props) {
     return (
       <div className={classes.body}>
         <ZipCodeGrab buyerId={UserId} setZipCodeAssigned={setZipCodeAssigned} />
+
         <h1 className={classes.heavyFont}>{`Test feed`}</h1>
         <Outlet />
       </div>
     );
+
   }
 
   // if kitchens is empty, fetch isn't finished yet, so we don't want to make any decisions yet
@@ -154,11 +146,13 @@ export default function Body(props) {
         floatCart={floatCart}
       />
     );
+
   } else {
     console.log('Feed is inactive');
     return (
       //Display purposes only
       <div className={classes.body}>
+
         <MenuComponent
           // dishes={fakeResponse}
           // ---------------------------------- this is necessary to pass functions to menucomponent, believe it or not
@@ -166,6 +160,7 @@ export default function Body(props) {
           floatCart={floatCart}
         />
         <FloatingCart floatCart={floatCart} />
+
         <Outlet />
       </div>
     );

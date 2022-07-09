@@ -52,10 +52,17 @@ menuController.getSellerMenu = async (req, res, next) => {
    FROM people LEFT OUTER JOIN species ON people.species_id = species._id LEFT OUTER JOIN planets ON people.homeworld_id = planets._id;`;
   const text2 = `SELECT f.title, f._id AS id FROM films f INNER JOIN people_in_films pif ON f._id=pif.film_id WHERE pif.person_id=$1;`;
   */
-  const sqlQuery = `select d.pk_dish_id, d.fk_seller_id, d.dish_name, d.description, d.price, d.quantity_available,s.kitchen_name, s.pickup_window_start, s.pickup_window_end, s.cuisine, s.market_enabled
-  FROM public.dishes d INNER JOIN public.sellers s ON d.fk_seller_id=s.pk_seller_id WHERE d.fk_seller_id = $1;`;
+
+  // sellers need to be able to have 0 dishes, so I'm splitting this query
+  // currently if no dishes for a seller, they don't show up at all because of the join
+  const sqlQuery = `select d.pk_dish_id, d.fk_seller_id, d.dish_name, d.description, d.price, d.quantity_available,s.kitchen_name, s.pickup_window_start, s.pickup_window_end, s.cuisine, s.market_enabled, s.seller_street_name, s.seller_city, s.seller_state, s.seller_zip_code
+  FROM public.sellers s LEFT JOIN public.dishes d ON s.pk_seller_id = d.fk_seller_id WHERE S.pk_seller_id = $1;`;
   try {
     const data = await db.query(sqlQuery, para);
+    // if (data.rows.length === 0) {
+    //   res.locals.sellerMenu = null;
+    //   return next();
+    // }
     console.log('data.rows==>', data.rows);
     const kitchenMenu = {};
     kitchenMenu.kitchenName = data.rows[0].kitchen_name;
@@ -63,6 +70,12 @@ menuController.getSellerMenu = async (req, res, next) => {
     kitchenMenu.pickup_window_end = data.rows[0].pickup_window_end;
     kitchenMenu.cuisine = data.rows[0].cuisine;
     kitchenMenu.market_enabled = data.rows[0].market_enabled;
+    kitchenMenu.address = {
+      seller_street_name: data.rows[0].seller_street_name,
+      seller_city: data.rows[0].seller_city,
+      seller_state: data.rows[0].seller_state,
+      seller_zip_code: data.rows[0].seller_zip_code,
+    };
 
     kitchenMenu.dishes = {};
 
@@ -127,11 +140,11 @@ menuController.updateMenu = async (req, res, next) => {
           const sqlQuery = `INSERT INTO public.dishes (dish_name, description, price, quantity_available, fk_seller_id)
            VALUES($1, $2, $3, $4, $5);`;
           const data = await db.query(sqlQuery, para);
-        } else {
-          const cache = Object.entries(req.body.menuChanges[dishId]).filter(
-            ([key, value]) => value
-          );
 
+        }
+        // if update
+        else {
+          const cache = Object.entries(req.body.menuChanges[dishId]);
           cache.forEach(([key, value], i) => {
             if (key === 'name') {
               cache[i][0] = 'dish_name';
@@ -139,19 +152,26 @@ menuController.updateMenu = async (req, res, next) => {
             if (key === 'quantity') {
               cache[i][0] = 'quantity_available';
             }
+            if (typeof cache[i][1] === 'string')
+              cache[i][1] = cache[i][1].replaceAll("'", "''");
           });
-          console.log('cache==>', cache);
+          console.log('2cache==>', cache);
 
           let text = cache.reduce((str, [key, value]) => {
             str += key + ' = ' + "'" + value + "', ";
             return str;
           }, '');
 
+          console.log('-0-------------------------------', dishId);
+          console.log(text.slice(0, -2));
+
           const sqlQuery = `UPDATE public.dishes
          SET ${text.slice(0, -2)}
           WHERE pk_dish_id=${dishId};`;
 
-          //console.log('sqlQuery==>', sqlQuery);
+          // `UPDATE public.dishes
+          //  SET dish_name = 'New Dishy', description = 'It's new! Try it!', price = '$4.40', quantity_available = '2'
+          //   WHERE pk_dish_id=44;`;
 
           const data = await db.query(sqlQuery);
         }
@@ -177,6 +197,7 @@ menuController.updateMenu = async (req, res, next) => {
     }
 
     if (address) {
+      // if address, guarantee entire address sent
       if (address.seller_street_name) {
         const para = [address.seller_street_name];
         const sqlQuery = `UPDATE public.sellers
@@ -185,10 +206,12 @@ menuController.updateMenu = async (req, res, next) => {
         const data = await db.query(sqlQuery, para);
       }
 
-      if (address.seller_street_number) {
-        const para = [address.seller_street_number];
+      console.log(address);
+      if (address.seller_state) {
+        console.log('seller state!');
+        const para = [address.seller_state];
         const sqlQuery = `UPDATE public.sellers
-    SET seller_street_number = $1
+    SET seller_state = $1
      WHERE pk_seller_id=${userId};`;
         const data = await db.query(sqlQuery, para);
       }

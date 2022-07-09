@@ -75,7 +75,7 @@ app.get(
 app.post(
   '/auth/zipcode',
   tokenVerifier2,
-  userController.buyerZip,
+  userController.userZip,
   (req, res) => {
     res.json('Successfully added zipcode');
   }
@@ -92,10 +92,10 @@ app.post(
   }
 );
 
-app.post('/db/menu', tokenVerifier2, menuController.createDish, (req, res) => {
-  //adding tokenVerifier2 as the 2nd middleware?
-  res.status(200).json(res.locals.dish);
-});
+// app.post('/db/menu', tokenVerifier2, menuController.createDish, (req, res) => {
+//   //adding tokenVerifier2 as the 2nd middleware?
+//   res.status(200).json(res.locals.dish);
+// });
 
 app.post('/db/updatemenu', menuController.updateMenu, (req, res) => {
   //console.log('res.locals.sellerMenu==>', res.locals.sellerMenu);
