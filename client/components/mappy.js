@@ -112,6 +112,7 @@ function Mappy(props) {
   if (routeIsLoaded) {
     // here you could set upperstate to pass up info about the route
     console.log(routeStats);
+    props.setMapStats(routeStats);
   }
 
   // else, show map
@@ -120,7 +121,7 @@ function Mappy(props) {
       mapContainerStyle={containerStyle}
       center={center}
       zoom={15}
-      options={{ streetViewControl: true, mapTypeControl: true }}
+      options={{ streetViewControl: false, mapTypeControl: false }}
     >
       {/* if we have a route made, display it */}
       {directionResp && <DirectionsRenderer directions={directionResp} />}

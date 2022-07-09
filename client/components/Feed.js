@@ -152,6 +152,7 @@ export default function Body(props) {
           // ---------------------------------- this is necessary to pass functions to menucomponent, believe it or not
           setfloatCart={setfloatCart}
           floatCart={floatCart}
+          userZip={props.userZip}
         />
         <FloatingCart floatCart={floatCart} />
         <Outlet />
