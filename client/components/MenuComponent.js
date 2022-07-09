@@ -113,6 +113,11 @@ export default function MenuComponent(props) {
               setMapStats={setMapStats}
             />
           </span>
+          <span style={{ fontSize: '16px', paddingTop: '5px' }}>
+            {mapStats.duration
+              ? `Trip Duration ⏲: ${mapStats.duration.text} | Trip Distance 🚗: ${mapStats.distance.text}`
+              : ''}
+          </span>
           <h3>{`Pickup Window: ${dateFormat(pickupStart)} - ${dateFormat(
             pickupEnd
           )}`}</h3>

@@ -11,6 +11,7 @@ import axios from 'axios';
 import FeedCardsContainer from './FeedCardsContainer';
 import { useLocation } from 'react-router';
 import { useNavigate, Navigate } from 'react-router-dom';
+import Confirmation from './Confirmation.js';
 
 //Styling
 const useStyles = makeStyles((theme) => ({
@@ -72,6 +73,7 @@ export default function Body(props) {
   const [feedActive, setFeedActive] = useState(true);
   // define state
   const [kitchens, setKitchens] = useState({});
+  const [success, setSuccess] = useState();
 
   // FEED COMPONENT
   // state: cartState
@@ -108,6 +110,16 @@ export default function Body(props) {
 
   // if zip code not ready, display that and return early
   console.log(ZipCode, zipCodeAssigned);
+
+  // if (success === true) {
+  //   return <Confirmation success={true} />;
+  // }
+  // else if (success === false) {
+  //   return <Confirmation success={false} />;
+  // }
+
+  // If successfull, render component
+
   if (!ZipCode && !zipCodeAssigned) {
     return (
       <div className={classes.body}>

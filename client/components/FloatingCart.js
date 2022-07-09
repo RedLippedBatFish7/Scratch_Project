@@ -47,7 +47,8 @@ export default function (props) {
         <Stack>
           <h1>${props.floatCart.price}</h1>
           <h3> Current Cart: </h3>
-          <h3> Kyle's Scrambla </h3>
+          Here's where we'd put food if <br />
+          we had time to add that feature {':)'}
           <Button color='primary' onClick={checkout}>
             Checkout
           </Button>

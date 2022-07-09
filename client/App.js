@@ -34,10 +34,10 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [userType, setUserType] = useState('buyer');
-  const [userId, setUserId] = useState(13);
-  const [userZip, setUserZip] = useState(15222);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState('');
+  const [userId, setUserId] = useState(0);
+  const [userZip, setUserZip] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
   // read cookies to see if logged in currently
