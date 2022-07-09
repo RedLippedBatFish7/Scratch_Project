@@ -112,7 +112,7 @@ userController.login = async (req, res, next) => {
 // Used to send back seller information to the front end
 userController.sellerInformation = async (req, res, next) => {
   try {
-    const sqlQuery = `select pk_seller_id, kitchen_name, seller_street_name, seller_street_number, seller_city, seller_zip_code
+    const sqlQuery = `select pk_seller_id, kitchen_name, seller_street_name, seller_street_number, seller_city, seller_zip_code, seller_bio, cuisine, pickup_window_start, pickup_window_end, market_enabled
    from public.sellers`;
     data = await db.query(sqlQuery);
     console.log(data.rows);
@@ -125,10 +125,12 @@ userController.sellerInformation = async (req, res, next) => {
 
 userController.userZip = async (req, res, next) => {
   // destructuring the request body
+
   const userId = req.cookies.userId;
   const userType = req.cookies.userType;
   const { zipcode } = req.body;
   details = [zipcode, userId];
+
 
   try {
     //updating the zipcode using the user id

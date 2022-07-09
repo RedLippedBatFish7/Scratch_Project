@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Cooking from '../assets/cooking.jpg';
+
 import Button from '@material-ui/core/Button';
 import { Stack } from '@mui/material';
 import { Outlet, Link } from 'react-router-dom';
 import ZipCodeGrab from './ZipCodeGrab';
 
+
 //Styling
 const useStyles = makeStyles((theme) => ({
   body: {
     height: '100vh',
+
+
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -25,15 +29,34 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: '900',
     fontSize: '40px',
     fontFamily: 'Nunito',
+
+
   },
 }));
 
 export default function Body(props) {
-  //Declare variables and state
   const classes = useStyles();
   // const ZipCode = props.userZip;
   // const UserId = props.userId;
   const [zipCodeAssigned, setZipCodeAssigned] = useState(false);
+  const [feedActive, setFeedActive] = useState(true);
+
+  // define state
+  const [kitchens, setKitchens] = useState({});
+
+  // FEED COMPONENT
+  // state: cartState
+  // path: '/feed'
+
+  // Cards component (all cards rendered here) // you are here
+  // path: '/feed' exact
+  // button routes us to '/feed/:sellerid'
+
+  // Seller Page
+  // path: '/feed/:sellerId' exact
+
+  // useEffect to update the state exactly once here
+
 
   console.log('Feed component hit, rendered with a zipcode of ', props.userZip);
   console.log('Buyer Id recognized as ', props.userId);
@@ -49,6 +72,7 @@ export default function Body(props) {
         <Outlet />
       </div>
     );
+
   } else {
     return (
       <div className={classes.body}>

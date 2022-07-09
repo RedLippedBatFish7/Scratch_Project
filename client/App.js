@@ -1,4 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
+
 // import { Route, NavLink, HashRouter } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { CssBaseline, makeStyles } from '@material-ui/core';
@@ -10,9 +12,11 @@ import SignUp from './components/SignUp';
 import SellerBody from './components/SellerBody';
 import SellerLogin from './components/SellerLogin';
 import SellerSignUp from './components/SellerSignUp';
+
 import KitchenEdit from './components/KitchenEdit';
 import Account from './components/KitchenEdit';
 import Mappy from './components/mappy';
+
 // // import './stylesheets/styles.scss';
 
 import { Routes, Route, Navigate } from 'react-router-dom';
@@ -31,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
 // create App
 const App = () => {
   const classes = useStyles();
+
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState('');
@@ -83,12 +88,14 @@ const App = () => {
     setUserZip(0);
   };
 
+
   if (isLoggedIn) {
     return (
       <div className={classes.webmain}>
         <CssBaseline />
         <Routes>
           {/* This route will see we're on "/" and auto-redirect to /feed. "/" isn't possible while logged in */}
+
           <Route
             path='/'
             exact
@@ -111,7 +118,9 @@ const App = () => {
             <Route
               path='/MyKitchen'
               element={<KitchenEdit userType={userType} userId={userId} />}
+
             />
+            <Route path='/feed/:id' element={<SignUp />} />
           </Route>
           <Route path='/*' element={<Navigate to='/' replace={true} />} />
         </Routes>
@@ -123,7 +132,9 @@ const App = () => {
     <div className={classes.webmain}>
       <CssBaseline />
       <Routes>
+
         <Route path='/' element={<Nav />}>
+
           {/* Displayed at same time as nav bar */}
           <Route path='/' element={<Body setIsLoggedIn={setIsLoggedIn} />}>
             {/* Displayed at same time as generic body */}
