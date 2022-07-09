@@ -116,7 +116,37 @@ userController.sellerInformation = async (req, res, next) => {
    from public.sellers`;
     data = await db.query(sqlQuery);
     console.log(data.rows);
-    res.locals.data = data.rows;
+    const mappedData = {};
+    for (let el of data.rows) {
+      console.log(el, 'booooooooooooooooooooo');
+      const {
+        pk_seller_id,
+        kitchen_name,
+        seller_street_name,
+        seller_street_number,
+        seller_city,
+        seller_zip_code,
+        seller_bio,
+        cuisine,
+        pickup_window_start,
+        pickup_window_end,
+        market_enabled,
+      } = el;
+      mappedData[pk_seller_id] = {
+        kitchen_name,
+        seller_street_name,
+        seller_street_number,
+        seller_city,
+        seller_zip_code,
+        seller_bio,
+        cuisine,
+        pickup_window_start,
+        pickup_window_end,
+        market_enabled,
+      };
+    }
+
+    res.locals.data = mappedData;
     return next();
   } catch (error) {
     return next({ message: error.detail });

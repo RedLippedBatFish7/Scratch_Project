@@ -1,18 +1,17 @@
-
 import React, { useState, useEffect } from 'react';
-
 // import { Route, NavLink, HashRouter } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
 import { CssBaseline, makeStyles } from '@material-ui/core';
-import Nav from './components/Nav';
-import Body from './components/Body';
+import MenuComponent from './components/MenuComponent';
+import SellerLogin from './components/SellerLogin';
+import Button from '@material-ui/core/Button';
+import React, { useState } from 'react';
 import Feed from './components/Feed';
+import Nav from './components/Nav'; //    < SAIF WZ HERE >
+import Body from './components/Body';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import SellerBody from './components/SellerBody';
-import SellerLogin from './components/SellerLogin';
 import SellerSignUp from './components/SellerSignUp';
-
 import KitchenEdit from './components/KitchenEdit';
 import Account from './components/KitchenEdit';
 import Mappy from './components/mappy';
@@ -35,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
 // create App
 const App = () => {
   const classes = useStyles();
-
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState('');
@@ -121,6 +119,7 @@ const App = () => {
 
             />
             <Route path='/feed/:id' element={<SignUp />} />
+
           </Route>
           <Route path='/*' element={<Navigate to='/' replace={true} />} />
         </Routes>
