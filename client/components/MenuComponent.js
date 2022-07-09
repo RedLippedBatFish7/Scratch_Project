@@ -1,60 +1,105 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Button, Paper } from "@material-ui/core";
-import { Stack } from "@mui/material";
-import MenuItem from "./MenuItem";
-import { useLocation } from "react-router";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { Button, Paper } from '@material-ui/core';
+import { Stack } from '@mui/material';
+import MenuItem from './MenuItem';
+import { useLocation } from 'react-router';
+// import { useNavigate, Navigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
   papermain: {
-    width: "50%",
-    padding: "10px 0px 0px 10px",
-    margin: "10px 0px 20px 10px",
+    width: '50%',
+    padding: '10px 0px 0px 10px',
+    margin: '10px 0px 20px 10px',
   },
   stack: {
-    padding: "0px 10px",
+    padding: '0px 10px',
   },
   paperbody: {
-    width: "50%",
-    backgroundColor: "#ecf0f1",
-    margin: "10px",
+    width: '50%',
+    backgroundColor: '#ecf0f1',
+    margin: '10px',
+  },
+  nestedBody: {
+    width: '100%',
+    height: '100%',
+    overflowY: 'scroll',
   },
 }));
+
+const dateFormat = (time) => {
+  return moment(time, 'hhmm').format('LT');
+};
 
 const destructure = (object, props) => {
   const menuUnit = [];
   for (const key in object) {
-    if (Object.hasOwnProperty.call(object, key)) {
-      const element = object[key];
-      menuUnit.push(
-        <MenuItem
-          name={element.name}
-          description={element.description}
-          price={element.price}
-          quantity={element.quantity}
-          setFloatPrice={props.setFloatPrice}
-          floatPrice={props.floatPrice}
-        />
-      );
-    }
+    const element = object[key];
+    console.log(object);
+    menuUnit.push(
+      <MenuItem
+        key={key}
+        dishId={key}
+        name={element.name}
+        description={element.description}
+        price={element.price}
+        quantity={element.quantity}
+        setfloatCart={props.setfloatCart}
+        floatCart={props.floatCart}
+      />
+    );
   }
   return menuUnit;
 };
 export default function MenuComponent(props) {
-  console.log("sup im the menu component");
-  const [restaurantName, setRestaurantName] = useState("");
+  console.log('sup im the menu component');
   const classes = useStyles();
-  const newLocation = useLocation();
-  console.log(newLocation);
-  //const dishes = props.dishes.dishes;
+  const [restaurantName, setRestaurantName] = useState('');
+  const [dishes, setDishes] = useState({});
+  const [street, setStreet] = useState('');
+  const [pickupStart, setPickupStart] = useState('');
+  const [pickupEnd, setPickupEnd] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // this line "receives" the useNavigate from elsewhere. it gives us access to props we want to pass
+  // const { state } = useLocation();
+  // console.log(state);
+
+  // this line allows us to access the ID parameter we passed when routing to this component
+  const { sellerId } = useParams();
+
+  console.log(props);
+
+  console.log(sellerId);
+  useEffect(() => {
+    // so now we fetch!
+    axios.post('db/getmenu', { sellerId }).then((res) => {
+      console.log(res.data);
+      setDishes(res.data.dishes);
+      setRestaurantName(res.data.kitchenName);
+      setStreet(res.data.seller_street_name);
+      setPickupStart(res.data.pickup_window_start); // pickup_window_start
+      setPickupEnd(res.data.pickup_window_end);
+      setIsLoaded(true);
+    });
+  }, []);
+
+  if (!isLoaded) return <div></div>;
+
+  console.log(restaurantName, dishes, street);
+
   return (
     <Paper className={classes.paperbody}>
-      {/* //   <Stack className={classes.papermain}>
-         <h2>{props.dishes.kitchenName}</h2>
-         <span>{props.dishes.street}</span>
-        <span>8:00AM - 10:00AM ET</span>
-       </Stack>
-       {destructure(dishes, props)} */}
+      <Stack className={classes.papermain}>
+        {/* <h1>I'm the MenuComponent</h1> */}
+        <h2>{restaurantName}</h2>
+        <span>{street}</span>
+        <span>{`${dateFormat(pickupStart)} - ${dateFormat(pickupEnd)}`}</span>
+      </Stack>
+      {destructure(dishes, props)}
     </Paper>
   );
 }

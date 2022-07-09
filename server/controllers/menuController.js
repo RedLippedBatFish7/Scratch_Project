@@ -10,7 +10,13 @@ menuController.createDish = async (req, res, next) => {
   // Checking the usertype to decide which controller it has to pass through (createSeller vs createBuyer)
 
   try {
-    const props = ['sellerId', 'dish_name', 'description', 'price', 'quantity_available'];
+    const props = [
+      'sellerId',
+      'dish_name',
+      'description',
+      'price',
+      'quantity_available',
+    ];
     const values = [];
     // storing the values of the above keys which are received in the body of the request in the values array
     for (let i = 0; i < props.length; i++) {
@@ -34,8 +40,9 @@ menuController.createDish = async (req, res, next) => {
 
 menuController.getSellerMenu = async (req, res, next) => {
   //const { userId } = req.body;
-  const userId = req.cookies.userId;
+  const userId = req.body.sellerId || req.cookies.userId;
   const para = [userId];
+  console.log(para);
 
   //will be an inner join table
   //templete
@@ -59,7 +66,7 @@ menuController.getSellerMenu = async (req, res, next) => {
 
     kitchenMenu.dishes = {};
 
-    data.rows.forEach(dishObj => {
+    data.rows.forEach((dishObj) => {
       const dishId = dishObj['pk_dish_id'];
       const dish = {};
       dish.name = dishObj.dish_name;
@@ -83,7 +90,14 @@ menuController.updateMenu = async (req, res, next) => {
   const userId = req.cookies.userId;
   console.log('userId==>', userId);
   //const para = [userId];
-  const { kitchenName, menuChanges, windowTimes, address, cuisine, market_enabled } = req.body;
+  const {
+    kitchenName,
+    menuChanges,
+    windowTimes,
+    address,
+    cuisine,
+    market_enabled,
+  } = req.body;
 
   try {
     if (kitchenName) {
@@ -114,7 +128,9 @@ menuController.updateMenu = async (req, res, next) => {
            VALUES($1, $2, $3, $4, $5);`;
           const data = await db.query(sqlQuery, para);
         } else {
-          const cache = Object.entries(req.body.menuChanges[dishId]).filter(([key, value]) => value);
+          const cache = Object.entries(req.body.menuChanges[dishId]).filter(
+            ([key, value]) => value
+          );
 
           cache.forEach(([key, value], i) => {
             if (key === 'name') {
