@@ -8,11 +8,13 @@ import ZipCodeGrab from "./ZipCodeGrab";
 import MenuComponent from "./MenuComponent";
 import FloatingCart from "./FloatingCart";
 import axios from "axios";
+import FeedCardsContainer from "./FeedCardsContainer";
 
 //Styling
 const useStyles = makeStyles((theme) => ({
   body: {
     height: "100vh",
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -28,6 +30,18 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "900",
     fontSize: "40px",
     fontFamily: "Nunito",
+  },
+  feedItem: {
+    marginTop: "15px",
+    width: "100%",
+    padding: "5px",
+    maxWidth: "800px",
+    backgroundColor: "#FA8072",
+  },
+  buttons: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
   },
 }));
 
@@ -50,40 +64,67 @@ export default function Body(props) {
     },
   };
 
-  //Get request to server for restaurant data
-  // useEffect(() => {
-  //   axios.get("feed").then((response) => {
-  //     //response.data contains seller id, name, seller number
-  //     response.data.forEach((e, i) => {
-  //       console.log("element", e);
-  //       setMenu((old) => [
-  //         ...old,
-  //         <MenuComponent
-  //           kitchenName={e.kitchen_name}
-  //           street={e.seller_street_name}
-  //         />,
-  //       ]);
-  //     });
-  //   });
-  // }, []);
-
   //Declare variables and state
   const classes = useStyles();
   const ZipCode = props.userZip;
   const UserId = props.buyerId;
   const [zipCodeAssigned, setZipCodeAssigned] = useState(false);
-  const [floatPrice, setFloatPrice] = useState({ price: 0, dishes: 0 });
+  const [floatPrice, setFloatPrice] = useState({ price: 0, dishes: {} });
 
   // 1: {
   //   name: ,
   //   quantity: 0,
   // }
+  const [feedActive, setFeedActive] = useState(true);
+  // define state
+  const [kitchens, setKitchens] = useState({});
 
-  console.log("Feed component hit, rendered with a zipcode of ", ZipCode);
-  console.log("Buyer Id recognized as ", UserId);
+  // FEED COMPONENT
+  // state: cartState
+  // path: '/feed'
+
+  // Cards component (all cards rendered here) // you are here
+  // path: '/feed' exact
+  // button routes us to '/feed/:sellerid'
+
+  // Seller Page
+  // path: '/feed/:sellerId' exact
+
+  // useEffect to update the state exactly once here
+
+  useEffect(() => {
+    // axios to get state
+    axios
+      .get("/feed", {})
+      .then((res) => {
+        setKitchens(res.data);
+      })
+      .catch((error) => {
+        console.log(`error in getting kitchen's feed`);
+        console.log(error);
+      })
+      .then(() => {
+        console.log(`what's going on?`);
+      });
+  }, []);
+
+  //Return back to DOM
+  // feed component would conditionally render either Cards or SellerPage
 
   if (ZipCode || zipCodeAssigned) {
+    if (feedActive) {
+      console.log("FEED IS ACTIVE -----");
+      return (
+        <FeedCardsContainer
+          setFeedActive={setFeedActive}
+          kitchensFromFeed={kitchens}
+        />
+      );
+    }
+    if (!feedActive) return <div>SELLER PAGE HERE</div>;
+
     return (
+      //Display purposes only
       <div className={classes.body}>
         <MenuComponent
           dishes={fakeResponse}
@@ -94,6 +135,7 @@ export default function Body(props) {
         <Outlet />
       </div>
     );
+    // check for zipCode, if exists, then render the Feed container
   } else {
     return (
       <div className={classes.body}>

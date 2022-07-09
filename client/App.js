@@ -13,6 +13,7 @@ import SellerSignUp from "./components/SellerSignUp";
 // // import './stylesheets/styles.scss';
 
 import { Routes, Route, Navigate } from "react-router-dom";
+import MenuComponent from "./components/MenuComponent";
 
 const useStyles = makeStyles((theme) => ({
   webmain: {
@@ -29,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
   const classes = useStyles();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [userZip, setUserZip] = useState();
   const [buyerId, setBuyerId] = useState();
 
@@ -46,7 +47,9 @@ const App = () => {
             <Route
               path="/feed"
               element={<Feed userZip={userZip} buyerId={buyerId} />}
-            />
+            >
+              <Route path="/feed/:id" element={<MenuComponent />} />
+            </Route>
           </Route>
         </Routes>
       </div>
