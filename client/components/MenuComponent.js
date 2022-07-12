@@ -15,12 +15,18 @@ const useStyles = makeStyles((theme) => ({
     // width: '50%',
     padding: '10px 0px 0px 10px',
     // margin: '10px 0px 20px 10px',
+const useStyles = makeStyles((theme) => ({
+  papermain: {
+    width: '50%',
+    padding: '10px 0px 0px 10px',
+    margin: '10px 0px 20px 10px',
   },
   stack: {
     padding: '0px 10px',
   },
   paperbody: {
     width: '650px',
+    width: '50%',
     backgroundColor: '#ecf0f1',
     margin: '10px',
   },
@@ -83,6 +89,7 @@ export default function MenuComponent(props) {
       setDishes(res.data.dishes);
       setRestaurantName(res.data.kitchenName);
       setStreet(res.data.address.seller_street_name);
+      setStreet(res.data.seller_street_name);
       setPickupStart(res.data.pickup_window_start); // pickup_window_start
       setPickupEnd(res.data.pickup_window_end);
       setIsLoaded(true);
@@ -125,6 +132,12 @@ export default function MenuComponent(props) {
         {/* <span>{street}</span> */}
       </Stack>
       <div>{destructure(dishes, props)}</div>
+        {/* <h1>I'm the MenuComponent</h1> */}
+        <h2>{restaurantName}</h2>
+        <span>{street}</span>
+        <span>{`${dateFormat(pickupStart)} - ${dateFormat(pickupEnd)}`}</span>
+      </Stack>
+      {destructure(dishes, props)}
     </Paper>
   );
 }

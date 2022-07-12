@@ -119,7 +119,6 @@ export default function Body(props) {
   // }
 
   // If successfull, render component
-
   if (!ZipCode && !zipCodeAssigned) {
     return (
       <div className={classes.body}>
@@ -144,7 +143,22 @@ export default function Body(props) {
       );
       return <Navigate to='/feed' replace={true} />;
     }
+  }
 
+  // if kitchens is empty, fetch isn't finished yet, so we don't want to make any decisions yet
+  if (Object.keys(kitchens).length === 0) {
+    console.log('zip good, fetch not complete');
+    return <div>LOADING</div>;
+  }
+
+  // if zip code good and fetch complete, some part of the feed will render
+  if (feedActive) {
+    if (currentLocation.pathname.split('/')[2]) {
+      console.log(
+        'woah, you shouldnt be here --------------------------------'
+      );
+      return <Navigate to='/feed' replace={true} />;
+    }
     console.log('FEED IS ACTIVE -----');
     return (
       <FeedCardsContainer
@@ -165,6 +179,8 @@ export default function Body(props) {
           setfloatCart={setfloatCart}
           floatCart={floatCart}
           userZip={props.userZip}
+        />
+        <FloatingCart floatCart={floatCart} />
         />
         <FloatingCart floatCart={floatCart} />
         <Outlet />

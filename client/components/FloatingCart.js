@@ -49,6 +49,7 @@ export default function (props) {
           <h3> Current Cart: </h3>
           Here's where we'd put food if <br />
           we had time to add that feature {':)'}
+          <h3> Kyle's Scrambla </h3>
           <Button color='primary' onClick={checkout}>
             Checkout
           </Button>

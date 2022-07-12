@@ -1,11 +1,12 @@
+import React, { useState, useEffect } from 'react';
 // import { Route, NavLink, HashRouter } from 'react-router-dom';
 import { CssBaseline, makeStyles } from '@material-ui/core';
 import MenuComponent from './components/MenuComponent';
-import React, { useState, useEffect } from 'react';
 import SellerLogin from './components/SellerLogin';
 import Button from '@material-ui/core/Button';
+import React, { useState } from 'react';
 import Feed from './components/Feed';
-import Nav from './components/Nav'; //    < SAIF WZ HERE >
+import Nav from './components/Nav'; 
 import Body from './components/Body';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
@@ -111,6 +112,7 @@ const App = () => {
               path='/MyKitchen'
               element={<KitchenEdit userType={userType} userId={userId} />}
             />
+            <Route path='/feed/:id' element={<SignUp />} />
           </Route>
           <Route path='/*' element={<Navigate to='/' replace={true} />} />
         </Routes>

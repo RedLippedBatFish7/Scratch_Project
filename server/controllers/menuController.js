@@ -140,11 +140,11 @@ menuController.updateMenu = async (req, res, next) => {
           const sqlQuery = `INSERT INTO public.dishes (dish_name, description, price, quantity_available, fk_seller_id)
            VALUES($1, $2, $3, $4, $5);`;
           const data = await db.query(sqlQuery, para);
+
         }
         // if update
         else {
           const cache = Object.entries(req.body.menuChanges[dishId]);
-          console.log('1cache==>', cache);
           cache.forEach(([key, value], i) => {
             if (key === 'name') {
               cache[i][0] = 'dish_name';
