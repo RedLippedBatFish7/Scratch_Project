@@ -8,7 +8,13 @@ import { useLocation } from 'react-router';
 // import { useNavigate, Navigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
+import Mappy from './mappy';
 
+const useStyles = makeStyles((theme) => ({
+  papermain: {
+    // width: '50%',
+    padding: '10px 0px 0px 10px',
+    // margin: '10px 0px 20px 10px',
 const useStyles = makeStyles((theme) => ({
   papermain: {
     width: '50%',
@@ -19,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '0px 10px',
   },
   paperbody: {
+    width: '650px',
     width: '50%',
     backgroundColor: '#ecf0f1',
     margin: '10px',
@@ -63,6 +70,7 @@ export default function MenuComponent(props) {
   const [pickupStart, setPickupStart] = useState('');
   const [pickupEnd, setPickupEnd] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
+  const [mapStats, setMapStats] = useState({});
 
   // this line "receives" the useNavigate from elsewhere. it gives us access to props we want to pass
   // const { state } = useLocation();
@@ -80,6 +88,7 @@ export default function MenuComponent(props) {
       console.log(res.data);
       setDishes(res.data.dishes);
       setRestaurantName(res.data.kitchenName);
+      setStreet(res.data.address.seller_street_name);
       setStreet(res.data.seller_street_name);
       setPickupStart(res.data.pickup_window_start); // pickup_window_start
       setPickupEnd(res.data.pickup_window_end);
@@ -94,6 +103,35 @@ export default function MenuComponent(props) {
   return (
     <Paper className={classes.paperbody}>
       <Stack className={classes.papermain}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-evenly',
+            width: '100%',
+            alignItems: 'center',
+          }}
+        >
+          <h1>{restaurantName}</h1>
+          <span style={{ height: '250px', width: '600px' }}>
+            <Mappy
+              sellerAddr={street}
+              buyerAddr={String(props.userZip)}
+              setMapStats={setMapStats}
+            />
+          </span>
+          <span style={{ fontSize: '16px', paddingTop: '5px' }}>
+            {mapStats.duration
+              ? `Trip Duration ⏲: ${mapStats.duration.text} | Trip Distance 🚗: ${mapStats.distance.text}`
+              : ''}
+          </span>
+          <h3>{`Pickup Window: ${dateFormat(pickupStart)} - ${dateFormat(
+            pickupEnd
+          )}`}</h3>
+        </div>
+        {/* <span>{street}</span> */}
+      </Stack>
+      <div>{destructure(dishes, props)}</div>
         {/* <h1>I'm the MenuComponent</h1> */}
         <h2>{restaurantName}</h2>
         <span>{street}</span>

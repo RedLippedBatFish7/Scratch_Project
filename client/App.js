@@ -6,7 +6,7 @@ import SellerLogin from './components/SellerLogin';
 import Button from '@material-ui/core/Button';
 import React, { useState } from 'react';
 import Feed from './components/Feed';
-import Nav from './components/Nav'; //    < SAIF WZ HERE >
+import Nav from './components/Nav'; 
 import Body from './components/Body';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
@@ -37,7 +37,7 @@ const App = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState('');
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState(0);
   const [userZip, setUserZip] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
@@ -86,7 +86,6 @@ const App = () => {
     setUserZip(0);
   };
 
-
   if (isLoggedIn) {
     return (
       <div className={classes.webmain}>
@@ -104,22 +103,16 @@ const App = () => {
             {/* buyer feed */}
             <Route
               path='/feed'
-              element={
-                <Feed
-                  userZip={userZip}
-                  userId={userId}
-                  setUserZip={setUserZip}
-                />
-              }
-            />
-            <Route path='/account' element={<Account userType={userType} />} />
+              element={<Feed userZip={userZip} userId={userId} />}
+            >
+              <Route path='/feed/:sellerId' />{' '}
+              {/* don't need an element here */}
+            </Route>
             <Route
               path='/MyKitchen'
               element={<KitchenEdit userType={userType} userId={userId} />}
-
             />
             <Route path='/feed/:id' element={<SignUp />} />
-
           </Route>
           <Route path='/*' element={<Navigate to='/' replace={true} />} />
         </Routes>
@@ -131,9 +124,7 @@ const App = () => {
     <div className={classes.webmain}>
       <CssBaseline />
       <Routes>
-
         <Route path='/' element={<Nav />}>
-
           {/* Displayed at same time as nav bar */}
           <Route path='/' element={<Body setIsLoggedIn={setIsLoggedIn} />}>
             {/* Displayed at same time as generic body */}

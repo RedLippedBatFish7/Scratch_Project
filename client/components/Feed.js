@@ -11,6 +11,7 @@ import axios from 'axios';
 import FeedCardsContainer from './FeedCardsContainer';
 import { useLocation } from 'react-router';
 import { useNavigate, Navigate } from 'react-router-dom';
+import Confirmation from './Confirmation.js';
 
 //Styling
 const useStyles = makeStyles((theme) => ({
@@ -32,8 +33,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: '900',
     fontSize: '40px',
     fontFamily: 'Nunito',
-
-
   },
 }));
 
@@ -74,6 +73,7 @@ export default function Body(props) {
   const [feedActive, setFeedActive] = useState(true);
   // define state
   const [kitchens, setKitchens] = useState({});
+  const [success, setSuccess] = useState();
 
   // FEED COMPONENT
   // state: cartState
@@ -110,16 +110,23 @@ export default function Body(props) {
 
   // if zip code not ready, display that and return early
   console.log(ZipCode, zipCodeAssigned);
+
+  // if (success === true) {
+  //   return <Confirmation success={true} />;
+  // }
+  // else if (success === false) {
+  //   return <Confirmation success={false} />;
+  // }
+
+  // If successfull, render component
   if (!ZipCode && !zipCodeAssigned) {
     return (
       <div className={classes.body}>
         <ZipCodeGrab buyerId={UserId} setZipCodeAssigned={setZipCodeAssigned} />
-
         <h1 className={classes.heavyFont}>{`Test feed`}</h1>
         <Outlet />
       </div>
     );
-
   }
 
   // if kitchens is empty, fetch isn't finished yet, so we don't want to make any decisions yet
@@ -136,7 +143,22 @@ export default function Body(props) {
       );
       return <Navigate to='/feed' replace={true} />;
     }
+  }
 
+  // if kitchens is empty, fetch isn't finished yet, so we don't want to make any decisions yet
+  if (Object.keys(kitchens).length === 0) {
+    console.log('zip good, fetch not complete');
+    return <div>LOADING</div>;
+  }
+
+  // if zip code good and fetch complete, some part of the feed will render
+  if (feedActive) {
+    if (currentLocation.pathname.split('/')[2]) {
+      console.log(
+        'woah, you shouldnt be here --------------------------------'
+      );
+      return <Navigate to='/feed' replace={true} />;
+    }
     console.log('FEED IS ACTIVE -----');
     return (
       <FeedCardsContainer
@@ -146,21 +168,21 @@ export default function Body(props) {
         floatCart={floatCart}
       />
     );
-
   } else {
     console.log('Feed is inactive');
     return (
       //Display purposes only
       <div className={classes.body}>
-
         <MenuComponent
           // dishes={fakeResponse}
           // ---------------------------------- this is necessary to pass functions to menucomponent, believe it or not
           setfloatCart={setfloatCart}
           floatCart={floatCart}
+          userZip={props.userZip}
         />
         <FloatingCart floatCart={floatCart} />
-
+        />
+        <FloatingCart floatCart={floatCart} />
         <Outlet />
       </div>
     );
